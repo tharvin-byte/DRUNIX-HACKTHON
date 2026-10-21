@@ -1,0 +1,107 @@
+From 6d8414935cd43274645ad44c4bd11e5c6b04a14b Mon Sep 17 00:00:00 2001
+From: Argon Engineer <argon@queueshield.local>
+Date: Wed, 21 Oct 2026 17:24:27 +0000
+Subject: [PATCH 2/4] fix(m2): stop logging generated QS_API_KEY and validate
+ run_id file paths (D1, D2)
+
+---
+ queueshield/m2_simulator/qsim/api.py       | 22 +++++++++++++++++---
+ queueshield/m2_simulator/tests/test_api.py | 24 ++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 3 deletions(-)
+
+diff --git a/queueshield/m2_simulator/qsim/api.py b/queueshield/m2_simulator/qsim/api.py
+index 5f15693..4e8155d 100644
+--- a/queueshield/m2_simulator/qsim/api.py
++++ b/queueshield/m2_simulator/qsim/api.py
+@@ -9,6 +9,7 @@ import asyncio
+ import copy
+ import json
+ import os
++import re
+ import secrets
+ import subprocess
+ from contextlib import asynccontextmanager
+@@ -24,6 +25,17 @@ from qsim.sse import SseHub
+ 
+ MAX_BODY = 1_000_000
+ MOCK_STEP_S = 0.5
++RUN_ID_RE = re.compile(r"^r-S[0-8]-[0-9]+-U[0-4](?:-[a-z0-9]+)?$")
++
++
++def _safe_run_file(data_dir: Path, run_id: str, filename: str) -> Optional[Path]:
++    if not isinstance(run_id, str) or not RUN_ID_RE.match(run_id):
++        return None
++    runs_dir = (data_dir / "runs").resolve()
++    candidate = (runs_dir / run_id / filename).resolve()
++    if not candidate.is_relative_to(runs_dir):
++        return None
++    return candidate
+ 
+ 
+ def git_version() -> str:
+@@ -55,7 +67,7 @@ class State:
+         self.run: Optional[LiveRun] = None
+         self.key = os.environ.get("QS_API_KEY") or secrets.token_urlsafe(16)
+         if not os.environ.get("QS_API_KEY"):
+-            jsonlog.warn("QS_API_KEY not set; generated a key for this process", key=self.key)
++            jsonlog.warn("QS_API_KEY not set; generated a key for this process")
+         self.ledger_mode = os.environ.get("LEDGER_MODE", "model")
+         self.data_dir = Path(os.environ.get("DATA_DIR", Path(__file__).resolve().parents[2] / "data"))
+         self.version = git_version()
+@@ -177,7 +189,9 @@ def create_app() -> FastAPI:
+         if r is not None and run_id in (None, r.run_id):
+             return metrics.timeseries(r.engine, from_ms)
+         if run_id:
+-            f = st.data_dir / "runs" / run_id / "timeseries.json"
++            f = _safe_run_file(st.data_dir, run_id, "timeseries.json")
++            if f is None:
++                return err(400, "BAD_REQUEST", "invalid run_id")
+             if f.is_file():
+                 return json.loads(f.read_text(encoding="utf-8"))
+         return err(404, "NOT_FOUND", "unknown run")
+@@ -192,7 +206,9 @@ def create_app() -> FastAPI:
+ 
+     @app.get("/v1/results/{run_id}")
+     def result(run_id: str):
+-        f = st.data_dir / "runs" / run_id / "result.json"
++        f = _safe_run_file(st.data_dir, run_id, "result.json")
++        if f is None:
++            return err(400, "BAD_REQUEST", "invalid run_id")
+         if not f.is_file():
+             return err(404, "NOT_FOUND", run_id)
+         return json.loads(f.read_text(encoding="utf-8"))
+diff --git a/queueshield/m2_simulator/tests/test_api.py b/queueshield/m2_simulator/tests/test_api.py
+index 9277c74..2b334fd 100644
+--- a/queueshield/m2_simulator/tests/test_api.py
++++ b/queueshield/m2_simulator/tests/test_api.py
+@@ -20,3 +20,27 @@ def test_health_auth_and_scenario_lifecycle():
+         assert c.get("/v1/status").json()["state"] in ("RUNNING", "DONE")
+         assert c.post("/v1/scenario", json={"command": "RESET"}, headers=KEY).status_code == 202
+         assert c.get("/v1/status").json()["state"] == "IDLE"
++
++
++def test_d1_generated_api_key_is_never_logged(monkeypatch, capsys):
++    monkeypatch.delenv("QS_API_KEY", raising=False)
++    app = create_app()
++    generated_key = app.state.qs.key
++    captured = capsys.readouterr().out
++    assert "QS_API_KEY not set; generated a key for this process" in captured
++    assert generated_key not in captured
++
++
++def test_d2_run_id_validation_blocks_traversal():
++    with TestClient(create_app()) as c:
++        for bad_id in ("../config", "..%2F..%2Fetc%2Fpasswd", "not-a-valid-run-id", "r-S9-1-U0"):
++            r1 = c.get("/v1/timeseries", params={"run_id": bad_id})
++            assert r1.status_code == 400 and r1.json()["error"] == "BAD_REQUEST"
++        r2 = c.get("/v1/results/not-a-valid-run-id")
++        assert r2.status_code == 400 and r2.json()["error"] == "BAD_REQUEST"
++        # Valid run_id format that does not exist on disk returns 404 NOT_FOUND
++        r3 = c.get("/v1/results/r-S0-999-U0")
++        assert r3.status_code == 404 and r3.json()["error"] == "NOT_FOUND"
++        r4 = c.get("/v1/timeseries", params={"run_id": "r-S0-999-U0"})
++        assert r4.status_code == 404 and r4.json()["error"] == "NOT_FOUND"
++
+-- 
+2.34.1
+

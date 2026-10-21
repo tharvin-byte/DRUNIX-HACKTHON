@@ -1,0 +1,51 @@
+From d2b0508244247b4ddd9caaca70954cd88db43c8d Mon Sep 17 00:00:00 2001
+From: Argon Engineer <argon@queueshield.local>
+Date: Wed, 21 Oct 2026 17:27:57 +0000
+Subject: [PATCH 4/4] test(m1): align OpenUnknown argument order and 7-digit
+ txnRef in chaincode_test.go (M1-T02)
+
+---
+ queueshield/m1_ledger/chaincode/chaincode_test.go | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/queueshield/m1_ledger/chaincode/chaincode_test.go b/queueshield/m1_ledger/chaincode/chaincode_test.go
+index 357d47f..7dc5e5c 100644
+--- a/queueshield/m1_ledger/chaincode/chaincode_test.go
++++ b/queueshield/m1_ledger/chaincode/chaincode_test.go
+@@ -66,26 +66,26 @@ func TestOpenUnknownValidationAndIdempotency(t *testing.T) {
+ 	hash2 := "sha256:" + strings.Repeat("b", 64)
+ 
+ 	// SPEC §4.8 item 2: format validation for every argument (bad txnRef, bad bank, tatSeconds out of range)
+-	if _, err := ps.OpenUnknown(ctx, "bad ref!", "P1", "B1", "B2", hash1, "r-S6-1-U4", 120, 5000); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_BAD_ARG") {
++	if _, err := ps.OpenUnknown(ctx, "bad ref!", hash1, "P1", "B1", "B2", "r-S6-1-U4", 5000, 120); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_BAD_ARG") {
+ 		t.Fatalf("expected BAD_ARG for bad txnRef, got %v", err)
+ 	}
+-	if _, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-001", "P1", "B9", "B2", hash1, "r-S6-1-U4", 120, 5000); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_BAD_ARG") {
++	if _, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-0000001", hash1, "P1", "B9", "B2", "r-S6-1-U4", 5000, 120); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_BAD_ARG") {
+ 		t.Fatalf("expected BAD_ARG for bad bank, got %v", err)
+ 	}
+-	if _, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-001", "P1", "B1", "B2", hash1, "r-S6-1-U4", 3, 5000); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_BAD_ARG") {
+-		t.Fatalf("expected BAD_ARG for tatSeconds < 5, got %v", err)
++	if _, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-0000001", hash1, "P1", "B1", "B2", "r-S6-1-U4", 5000, 3); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_BAD_ARG") {
++		t.Fatalf("expected BAD_ARG for tatSeconds < 10, got %v", err)
+ 	}
+ 
+ 	// SPEC §4.8 item 3: OpenUnknown twice identical -> one write; with different idemKeyHash -> CONFLICT
+-	p1, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-001", "P1", "B1", "B2", hash1, "r-S6-1-U4", 120, 5000)
++	p1, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-0000001", hash1, "P1", "B1", "B2", "r-S6-1-U4", 5000, 120)
+ 	if err != nil || p1.State != "UNKNOWN" || ctx.stub.events != 1 {
+ 		t.Fatalf("first OpenUnknown failed: %v, events=%d", err, ctx.stub.events)
+ 	}
+-	p2, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-001", "P1", "B1", "B2", hash1, "r-S6-1-U4", 120, 5000)
++	p2, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-0000001", hash1, "P1", "B1", "B2", "r-S6-1-U4", 5000, 120)
+ 	if err != nil || p2.Version != p1.Version || ctx.stub.events != 1 {
+ 		t.Fatalf("identical OpenUnknown must be idempotent noop: err=%v events=%d", err, ctx.stub.events)
+ 	}
+-	if _, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-001", "P1", "B1", "B2", hash2, "r-S6-1-U4", 120, 5000); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_CONFLICT") {
++	if _, err := ps.OpenUnknown(ctx, "r-S6-1-U4:p-0000001", hash2, "P1", "B1", "B2", "r-S6-1-U4", 5000, 120); err == nil || !strings.HasPrefix(err.Error(), "QS_ERR_CONFLICT") {
+ 		t.Fatalf("different idemKeyHash must return QS_ERR_CONFLICT, got %v", err)
+ 	}
+ }
+-- 
+2.34.1
+
