@@ -1,0 +1,33 @@
+# Owned by M5 (docs/01_SYSTEM.md §11). UNTESTED: Docker is not installed on the machine that wrote it.
+#   LEDGER_MODE=mock docker compose up --build        # everything without Drunix
+#   docker compose up --build                         # needs a running Drunix network (m1_ledger/network/qs-net.sh bootstrap)
+# network_mode: host because the live gateway must reach the Drunix peers on host ports [VERIFY on WSL2 Docker Desktop;
+# fallback: run the gateway outside compose with `node src/main.ts`].
+x-common: &common
+  network_mode: host
+  environment: &env
+    QS_API_KEY: ${QS_API_KEY:-changeme}
+
+services:
+  ledger:
+    <<: *common
+    build: { context: ., dockerfile: m1_ledger/gateway/Dockerfile }
+    environment: { <<: *env, LEDGER_MODE: "${LEDGER_MODE:-mock}", DRUNIX_DIR: /drunix, TAT_SECONDS: "120", PORT: "8004" }
+    volumes: ["./m1_ledger/drunix:/drunix:ro", "./data:/data"]
+  sim:
+    <<: *common
+    build: { context: ., dockerfile: m2_simulator/Dockerfile }
+    environment: { <<: *env, CONTROL_URL: "http://localhost:8003", LEDGER_URL: "http://localhost:8004", LEDGER_MODE: "model", DATA_DIR: /data, SIM_MODE: live }
+    volumes: ["./data:/data"]
+  detect:
+    <<: *common
+    build: { context: ., dockerfile: m3_detection/Dockerfile }
+    environment: { <<: *env, SIM_URL: "http://localhost:8001", DATA_DIR: /data, MODEL_DIR: /data/models, DETECT_MODE: live }
+    volumes: ["./data:/data"]
+  control:
+    <<: *common
+    build: { context: ., dockerfile: m4_control/Dockerfile }
+    environment: { <<: *env, DETECT_URL: "http://localhost:8002", LEDGER_URL: "http://localhost:8004", OPERATOR_MODE: "${OPERATOR_MODE:-human}", CONTROL_MODE: live }
+  console:
+    <<: *common
+    build: { context: ., dockerfile: m5_console/Dockerfile }

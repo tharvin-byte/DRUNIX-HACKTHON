@@ -1,0 +1,660 @@
+{
+ "description": "Golden vectors for the paystate state machine (docs/M1_LEDGER.md \u00a74.3). Copy to ledger/testdata/transitions.json. Used by Go chaincode tests and the TypeScript mock tests; both MUST pass every case.",
+ "version": 1,
+ "cases": [
+  {
+   "from": "UNKNOWN",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "DEBITED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "sets_tat_deadline": true
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "SUCCESS",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "debit_implied": true
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "FAILED_NO_DEBIT",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated"
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "CREDIT_FAILED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "debit_implied": true,
+   "sets_tat_deadline": true
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "REVERSED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "debit_implied": true
+  },
+  {
+   "from": "UNKNOWN",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DEBITED",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "DEBITED",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DEBITED",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DEBITED",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "SUCCESS",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated"
+  },
+  {
+   "from": "DEBITED",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DEBITED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "debit then remitter failure"
+  },
+  {
+   "from": "DEBITED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DEBITED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "CREDIT_FAILED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "sets_tat_deadline": true
+  },
+  {
+   "from": "DEBITED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DEBITED",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "REVERSED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated"
+  },
+  {
+   "from": "DEBITED",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "CREDIT_FAILED",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "credit after credit failure"
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "remitter failure after credit failure"
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "CREDIT_FAILED",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "REVERSED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated"
+  },
+  {
+   "from": "CREDIT_FAILED",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "SUCCESS",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "SUCCESS",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "remitter failure after success"
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "beneficiary failure after success"
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "reversal after success"
+  },
+  {
+   "from": "SUCCESS",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "debit after failure"
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "credit after failure"
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "FAILED_NO_DEBIT",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "beneficiary failure after no-debit failure"
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "reversal after no-debit failure"
+  },
+  {
+   "from": "FAILED_NO_DEBIT",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "debit after reversal"
+  },
+  {
+   "from": "REVERSED",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "credit after reversal"
+  },
+  {
+   "from": "REVERSED",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "version_increment": 1,
+   "event": "PaymentUpdated",
+   "disputed_reason": "remitter failure after reversal"
+  },
+  {
+   "from": "REVERSED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "REVERSED",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "REVERSED",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "REVERSED",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "DEBIT",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "append_attestation_only": true,
+   "version_increment": 1,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "DEBIT",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "CREDIT",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "append_attestation_only": true,
+   "version_increment": 1,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "CREDIT",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org1MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "append_attestation_only": true,
+   "version_increment": 1,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "FAILURE_REMITTER",
+   "mspId": "Org2MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "append_attestation_only": true,
+   "version_increment": 1,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "FAILURE_BENEFICIARY",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "REVERSAL",
+   "mspId": "Org2MSP",
+   "expect_state": "DISPUTED",
+   "noop": false,
+   "append_attestation_only": true,
+   "version_increment": 1,
+   "event": null
+  },
+  {
+   "from": "DISPUTED",
+   "kind": "REVERSAL",
+   "mspId": "Org1MSP",
+   "expect_error": "QS_ERR_FORBIDDEN",
+   "noop": true,
+   "version_increment": 0,
+   "event": null
+  }
+ ]
+}

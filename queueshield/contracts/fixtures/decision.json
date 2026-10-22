@@ -1,0 +1,10 @@
+{
+  "rec_id": "rec-0007",
+  "decision": "APPROVE_SELECTED",
+  "operator": "saran",
+  "actions_selected": [
+    "THROTTLE_RETRIES",
+    "DEFER_CHECKS"
+  ],
+  "note": "bank-side, no failover"
+}

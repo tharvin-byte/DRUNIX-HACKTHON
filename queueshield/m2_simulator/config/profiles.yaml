@@ -1,0 +1,24 @@
+# docs/M2_SIMULATOR.md §4 client profiles.
+naive:
+  retry_on_timeout_prob: 0.5
+  retry_on_timeout_delay_ms: [2000, 6000]   # retries WITHOUT waiting for status (duplicate-prone)
+  retry_on_failure_delay_ms: [500, 2000]
+  attempt_cap: 3
+  check_every_ms: 2000
+  max_checks: 30
+  idempotency: false
+npci_rule:
+  check_schedule_ms: [10000, 15000, 25000]  # first at 10 s, then +15 s, +25 s (<= 3 within 120 s)
+  stop_codes: [E_STATUS_TIMEOUT, E_STATUS_OVERLOAD, E_STATUS_STOP]
+  horizon_ms: 120000
+  retry_backoff_base_ms: 1000
+  retry_backoff_cap_ms: 16000
+  attempt_cap: 3
+  idempotency: true
+governed:
+  inherits: npci_rule
+  budgeted: true            # checks released by the per-PSP CHECK_BUDGET token bucket, oldest first
+ledger_first:
+  inherits: governed
+  ledger: true              # open on ledger, wait ledger_wait_ms for a pushed resolution before checking
+retry_after_honour_frac: 0.7

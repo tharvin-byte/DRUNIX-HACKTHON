@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/action.schema.json",
+  "title": "Action to apply in the simulator (M4 -> M2)",
+  "type": "object",
+  "required": [
+    "action_id",
+    "run_id",
+    "action_type",
+    "scope",
+    "params",
+    "effective_from_sim_ms",
+    "origin"
+  ],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "pattern": "^act-[0-9]{5}$"
+    },
+    "rec_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/RunId"
+    },
+    "action_type": {
+      "enum": [
+        "THROTTLE_RETRIES",
+        "SHED_EXPIRED",
+        "PRIORITIZE_FRESH",
+        "SHIFT_TRAFFIC",
+        "CHECK_BUDGET",
+        "DEFER_CHECKS",
+        "PACE_PAYOUTS",
+        "HOLD_MONITOR",
+        "ESCALATE_HUMAN",
+        "ROLLBACK"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "psp": {
+          "type": "string",
+          "enum": [
+            "P1",
+            "P2",
+            "P3"
+          ]
+        },
+        "bank": {
+          "type": "string",
+          "enum": [
+            "B1",
+            "B2",
+            "B3",
+            "B4",
+            "B5"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "params": {
+      "type": "object"
+    },
+    "effective_from_sim_ms": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    },
+    "expires_sim_ms": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "origin": {
+      "enum": [
+        "POLICY_DEFAULT",
+        "OPERATOR_APPROVED",
+        "ROLLBACK"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

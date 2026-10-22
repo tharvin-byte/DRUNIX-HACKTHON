@@ -1,0 +1,89 @@
+# Rule table (docs/M4_CONTROL.md §3), evaluated in order; the first matching rule gives the base list.
+# scope keys: incident | switch | platform | psp (localizer PSP) | bank (localizer bank) | route
+# `light: true` uses throttle.warning_rate_fraction; `blocked_reason` marks an action that is shown but locked.
+rules_version: rules-v1
+rules:
+  - id: R0
+    when: {degraded: true}
+    actions:
+      - {type: HOLD_MONITOR, scope: incident}
+      - {type: ESCALATE_HUMAN, scope: incident}
+  - id: R1
+    when: {verdict: [SWITCH_STATUS_OVERLOAD]}
+    actions:
+      - {type: DEFER_CHECKS, scope: switch}
+      - {type: THROTTLE_RETRIES, scope: platform, light: true}
+      - {type: HOLD_MONITOR, scope: incident}
+  - id: R2
+    when: {severity: CRITICAL, verdict: [PSP_SIDE]}
+    actions:
+      - {type: SHED_EXPIRED, scope: psp}
+      - {type: THROTTLE_RETRIES, scope: psp}
+      - {type: DEFER_CHECKS, scope: bank, if_bank_lift_above: 0.2}
+      - {type: PRIORITIZE_FRESH, scope: psp}
+      - {type: SHIFT_TRAFFIC, scope: psp}
+  - id: R3
+    when: {severity: CRITICAL, verdict: [BANK_SIDE]}
+    actions:
+      - {type: THROTTLE_RETRIES, scope: bank}
+      - {type: DEFER_CHECKS, scope: bank}
+      - {type: SHED_EXPIRED, scope: platform}
+      - {type: PRIORITIZE_FRESH, scope: platform}
+      - {type: SHIFT_TRAFFIC, scope: psp, blocked_reason: "BANK_SIDE: shared bank {bank} is slow on every PSP"}
+      # TODO(M4): PACE_PAYOUTS(b) when PAYOUT traffic to b is > 10 % of b's arrivals (needs an M3 feature)
+  - id: R4
+    when: {severity: WARNING}
+    actions:
+      - {type: DEFER_CHECKS, scope: incident}
+      - {type: THROTTLE_RETRIES, scope: incident, light: true}
+      - {type: HOLD_MONITOR, scope: incident}
+  - id: R5
+    when: {verdict: [ROUTE_SPECIFIC]}
+    actions:
+      - {type: THROTTLE_RETRIES, scope: route}
+      - {type: DEFER_CHECKS, scope: bank}
+      - {type: SHIFT_TRAFFIC, scope: route}
+  - id: R6
+    when: {verdict: [MULTI_FAULT, PLATFORM_WIDE]}
+    actions:
+      - {type: THROTTLE_RETRIES, scope: platform}
+      - {type: DEFER_CHECKS, scope: platform}
+      - {type: ESCALATE_HUMAN, scope: incident}
+  - id: R7
+    when: {surge: true}
+    note: "demand surge, queue draining, no action"
+    actions:
+      - {type: HOLD_MONITOR, scope: incident}
+# CRITICAL with a verdict no rule names (e.g. INSUFFICIENT_EVIDENCE): be conservative
+fallback:
+  - {type: THROTTLE_RETRIES, scope: platform}
+  - {type: DEFER_CHECKS, scope: platform}
+  - {type: ESCALATE_HUMAN, scope: incident}
+advisory_map:
+  THROTTLE_RETRIES: SLOW_RETRIES
+  DEFER_CHECKS: DEFER_CHECKS
+  PACE_PAYOUTS: PACE_PAYOUTS
+  SHIFT_TRAFFIC_BLOCKED: DO_NOT_SHIFT
+text:
+  side_effect:
+    THROTTLE_RETRIES: "Some retries are delayed; payments in scope may abandon sooner"
+    SHED_EXPIRED: "Queued attempts whose client already timed out are dropped (definitive non-commit)"
+    PRIORITIZE_FRESH: "Retries wait longer behind fresh attempts"
+    SHIFT_TRAFFIC: "Moves new attempts onto other PSPs, which must have spare capacity"
+    CHECK_BUDGET: "Status checks in scope are released more slowly"
+    DEFER_CHECKS: "Unknown payments resolve more slowly"
+    PACE_PAYOUTS: "Payout batch completes later"
+    HOLD_MONITOR: "None; no change to the network"
+    ESCALATE_HUMAN: "None; asks for a human review"
+    ROLLBACK: "Restores the previous behaviour"
+  rollback_condition:
+    THROTTLE_RETRIES: "Segment clean for 6 ticks, then loosen"
+    SHED_EXPIRED: "Segment clean for 6 ticks"
+    PRIORITIZE_FRESH: "Segment clean for 6 ticks"
+    SHIFT_TRAFFIC: "Source PSP clean for 6 ticks, then shift back in steps"
+    CHECK_BUDGET: "n/a (recomputed every tick)"
+    DEFER_CHECKS: "Pending count back to baseline"
+    PACE_PAYOUTS: "Beneficiary bank clean for 6 ticks"
+    HOLD_MONITOR: "n/a"
+    ESCALATE_HUMAN: "n/a"
+    ROLLBACK: "n/a"

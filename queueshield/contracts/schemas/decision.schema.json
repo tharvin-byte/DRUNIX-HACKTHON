@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/decision.schema.json",
+  "title": "Operator decision (M5 -> M4)",
+  "type": "object",
+  "required": [
+    "rec_id",
+    "decision",
+    "operator",
+    "actions_selected"
+  ],
+  "properties": {
+    "rec_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "APPROVE_ALL",
+        "APPROVE_SELECTED",
+        "REJECT"
+      ]
+    },
+    "operator": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,31}$"
+    },
+    "actions_selected": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "THROTTLE_RETRIES",
+          "SHED_EXPIRED",
+          "PRIORITIZE_FRESH",
+          "SHIFT_TRAFFIC",
+          "CHECK_BUDGET",
+          "DEFER_CHECKS",
+          "PACE_PAYOUTS",
+          "HOLD_MONITOR",
+          "ESCALATE_HUMAN",
+          "ROLLBACK"
+        ]
+      }
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 280
+    }
+  },
+  "additionalProperties": false
+}

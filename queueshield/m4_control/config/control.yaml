@@ -1,0 +1,42 @@
+# docs/M4_CONTROL.md §2, §5, §6, §8. Every number the spec states lives here.
+governor:
+  default_capacity_per_s: 80.0     # C_status when the switch capacity is not observable (spec default)
+  knee: 0.85                       # keep the switch below the slowdown knee u0
+  spare_share: 0.5
+  r_min: 1.0
+  r_max_frac: 0.3                  # r_max = 0.3 * C_status * share_p
+  burst_mult: 2.0
+  publish_change: 0.10             # publish CHECK_BUDGET when any value changes by > 10 %
+  first_check_delay_ms: 10000
+  max_checks: 3
+  horizon_ms: 120000
+  ledger_wait_ms: 10000
+recommendations:
+  expiry_sim_s: 120
+  min_confidence_auto: 0.6
+ledger:
+  retries: 3
+  backoff_s: [0.5, 1.0, 2.0]
+  pending_retry_s: 10
+  advisory_valid_s: 300
+  do_not_shift_valid_s: 600
+throttle:
+  critical_rate_fraction: 0.10
+  warning_rate_fraction: 0.20
+  retry_after_ms: [2000, 8000]
+defer:
+  budget_multiplier: 0.5
+  first_check_delay_multiplier: 1.5
+shift:
+  max_step: 0.25
+  min_trickle: 0.05
+  target_min_spare: 0.30
+  ramp_ms: 10000
+  min_step_gap_ms: 10000
+pace:
+  spare_frac: 0.5
+  min_rate_per_s: 5
+rollback:
+  clean_ticks: 6
+operator:
+  delay_s: 20

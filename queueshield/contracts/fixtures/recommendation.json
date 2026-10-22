@@ -1,0 +1,77 @@
+{
+  "rec_id": "rec-0007",
+  "incident_id": "inc-0003",
+  "run_id": "r-S3-1-U4",
+  "created_sim_ms": 260000,
+  "segment_id": "bank:*:B3",
+  "severity": "CRITICAL",
+  "verdict": "BANK_SIDE",
+  "p_stuck": 0.41,
+  "confidence": 0.81,
+  "countdown_s_estimate": 38,
+  "actions": [
+    {
+      "action_type": "THROTTLE_RETRIES",
+      "params": {
+        "rate_fraction": 0.1,
+        "retry_after_ms": [
+          2000,
+          8000
+        ]
+      },
+      "scope_segment_id": "bank:*:B3",
+      "eligible": true,
+      "blocked_by": null,
+      "advisory_kind": "SLOW_RETRIES",
+      "side_effect": "Some payments to B3 abandon sooner",
+      "rollback_condition": "Segment clean for 6 ticks, then loosen in 2 steps"
+    },
+    {
+      "action_type": "DEFER_CHECKS",
+      "params": {
+        "budget_multiplier": 0.5,
+        "first_check_delay_multiplier": 1.5
+      },
+      "scope_segment_id": "bank:*:B3",
+      "eligible": true,
+      "blocked_by": null,
+      "advisory_kind": "DEFER_CHECKS",
+      "side_effect": "Unknown payments resolve more slowly",
+      "rollback_condition": "Pending count back to baseline"
+    },
+    {
+      "action_type": "SHIFT_TRAFFIC",
+      "params": {
+        "fraction": 0.25
+      },
+      "scope_segment_id": "psp:P1:*",
+      "eligible": false,
+      "blocked_by": "BANK_SIDE: shared bank B3 is slow on every PSP",
+      "advisory_kind": "DO_NOT_SHIFT",
+      "side_effect": "Would move B3 traffic onto P2 and P3",
+      "rollback_condition": "n/a"
+    }
+  ],
+  "reasons": [
+    {
+      "code": "TIMEOUT_UP",
+      "observed": 0.08,
+      "baseline": 0.01,
+      "z": 5.1
+    },
+    {
+      "code": "LATENCY_UP",
+      "observed": 2.9,
+      "baseline": 1.0,
+      "z": 4.2
+    }
+  ],
+  "status": "PENDING",
+  "model_versions": {
+    "detector": "d3-rules-v1",
+    "forecaster": "grid-v1",
+    "localizer": "lift-v1",
+    "policy": "rules-v1"
+  },
+  "features_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

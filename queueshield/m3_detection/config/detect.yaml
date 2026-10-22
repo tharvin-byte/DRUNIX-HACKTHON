@@ -1,0 +1,131 @@
+# Every number in docs/M3_DETECTION.md. Thresholds marked (tune) are bisected on validation runs and frozen in
+# detectors_frozen.yaml before any test run (§4.2 fairness rule). Lines marked IBM are lessons from the
+# IBM Z Datathon project (see docs/DEVIATIONS.md), not spec values.
+tick_ms: 5000
+windows:
+  short_s: 10
+  long_s: 60
+  ring_buckets: 120
+  queue_growth_s: 30
+  orbit_s: 15
+  watermark_ms: 2000
+  dedupe_capacity: 200000
+  latency_bins: 64
+  latency_lo_ms: 10.0
+  latency_hi_ms: 60000.0
+  near_timeout_frac: 0.8
+eligibility:
+  route_min_attempts: 30
+  latency_min_samples: 20
+  no_data_after_s: 12          # D-9: input cut for 12 s -> DEGRADED_MONITORING
+baselines:
+  alpha: 0.02
+  warmup_s: 120
+  z_clip: 6.0
+  spread_floor:
+    arrival_rate: 1.0
+    fresh_rate: 1.0
+    raf: 0.02
+    success_ratio: 0.01
+    timeout_ratio: 0.005
+    near_timeout_ratio: 0.005
+    reject_ratio: 0.005
+    p50_ms: 20.0
+    p95_ms: 40.0
+    p99_ms: 60.0
+    latency_ratio: 0.05
+    pending_count: 1.0
+    pending_frac: 0.005
+    queue_depth: 1.0
+    queue_growth: 0.1
+    utilisation: 0.02
+    queue_delay_est_ms: 20.0
+    orbit_proxy: 1.0
+    status_check_rate: 0.1
+    switch_status_util: 0.02
+    load_over_capacity: 0.02
+    ledger_open_rate: 0.1
+    ledger_unresolved: 1.0
+d0:
+  theta0: 0.90                 # (tune) platform success_ratio(Wl) threshold
+  ticks: 2
+d1:
+  timeout_a: 0.05              # (tune, scaled by sensitivity)
+  success_b: 0.90
+  sensitivity: 1.0
+  ticks: 2
+d2:
+  k: 0.5
+  h: 5.0                       # (tune)
+d3:
+  z_lat: 2.5
+  lat_min_ratio: 1.5           # IBM: S_lat also needs latency_ratio >= 1.5
+  to_k_spread: 3.0
+  to_abs: 0.02
+  near_to_k_spread: 3.0
+  near_to_abs: 0.05
+  q_delay_mult: 1.5
+  q_min_delay_ms: 250.0        # IBM: S_q needs a 0.25 s absolute rise
+  queue_growth_eps: 0.5        # IBM: queue growth below 0.5 items/s is noise
+  raf_mult: 1.25
+  rej_k_spread: 3.0
+  rej_abs: 0.01
+  surge_z: 2.5
+  surge_max_signals: 1
+  surge_ticks: 2
+  logistic_k: 12.0             # rule score = logistic(k * (signals/6 - x0))
+  logistic_x0: 0.3
+  tau: 0.5                     # (tune)
+  persistence_k: 3
+  persistence_n: 4
+  min_signals: 2
+  fast_score: 0.999
+  fast_signals: 3
+  fast_ticks: 2
+  critical_p_stuck: 0.5
+  critical_switch_util: 0.95
+  model_budget_ms: 50.0
+  confidence_samples: 200
+  reasons_top: 4
+localizer:
+  bad_latency_mult: 1.5
+  exp_floor: 0.005
+  min_excess: 20
+  switch_util: 0.9
+  switch_ticks: 2
+  switch_max_ep: 0.6
+  switch_max_lift: 0.4
+  bank_ib: 0.75
+  bank_lift: 0.4
+  bank_other_ib_max: 0.5
+  bank_max_ep: 0.6
+  psp_ep: 0.67
+  psp_max_lift: 0.3
+  route_ep: 0.67
+  route_ib: 0.75
+  route_cell: 0.4
+  multi_bank_ib: 0.6
+  multi_psp_ep: 0.35
+  multi_psp_lift: 0.1          # interpretation of "lift pattern not single" (docs/DEVIATIONS.md)
+  hysteresis_ticks: 2
+  confidence_excess: 100
+  base_alpha: 0.02
+forecaster:
+  delay_max: 2.0
+  orbit_max: 3.0
+  bins: 20
+  monotone: true               # spec D-7; IBM saw monotone smoothing cost AUC (docs/DEVIATIONS.md)
+  ema: 0.5
+  watch: 0.3
+  critical: 0.5
+  countdown_ticks: 4
+  grid_file: forecaster_grid.json
+lifecycle:
+  improving_ticks: 3
+  clean_ticks: 6
+  reopen_s: 60
+  merge_s: 30
+versions:
+  detector: d3-rules-v1
+  forecaster: grid-v1
+  localizer: lift-v1

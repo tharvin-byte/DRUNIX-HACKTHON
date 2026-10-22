@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/ledger_payment.schema.json",
+  "title": "On-ledger payment record (chaincode paystate)",
+  "type": "object",
+  "required": [
+    "docType",
+    "txnRef",
+    "idemKeyHash",
+    "payerPsp",
+    "remitterBank",
+    "beneficiaryBank",
+    "runId",
+    "state",
+    "openedAt",
+    "openedSimMs",
+    "debitImplied",
+    "tatSeconds",
+    "tatBreached",
+    "attestations",
+    "version"
+  ],
+  "properties": {
+    "docType": {
+      "const": "payment"
+    },
+    "txnRef": {
+      "type": "string",
+      "pattern": "^r-S[0-8]-[0-9]+-U[0-4](-[a-z0-9]+)?:p-[0-9]{7}$"
+    },
+    "idemKeyHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "payerPsp": {
+      "type": "string",
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "remitterBank": {
+      "type": "string",
+      "enum": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5"
+      ]
+    },
+    "beneficiaryBank": {
+      "type": "string",
+      "enum": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5"
+      ]
+    },
+    "runId": {
+      "$ref": "common.schema.json#/$defs/RunId"
+    },
+    "state": {
+      "enum": [
+        "UNKNOWN",
+        "DEBITED",
+        "SUCCESS",
+        "FAILED_NO_DEBIT",
+        "CREDIT_FAILED",
+        "REVERSED",
+        "DISPUTED"
+      ]
+    },
+    "openedAt": {
+      "type": "integer",
+      "description": "unix seconds from tx timestamp"
+    },
+    "openedSimMs": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    },
+    "debitAt": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "creditAt": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "failureAt": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "reversalAt": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "reasonCode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "debitImplied": {
+      "type": "boolean"
+    },
+    "tatSeconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tatDeadline": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tatBreached": {
+      "type": "boolean"
+    },
+    "attestations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "mspId",
+          "kind",
+          "at",
+          "simMs"
+        ],
+        "properties": {
+          "mspId": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "DEBIT",
+              "CREDIT",
+              "FAILURE_REMITTER",
+              "FAILURE_BENEFICIARY",
+              "REVERSAL"
+            ]
+          },
+          "at": {
+            "type": "integer"
+          },
+          "simMs": {
+            "type": "integer"
+          },
+          "reasonCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "additionalProperties": false
+}

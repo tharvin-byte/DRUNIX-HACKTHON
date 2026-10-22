@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "QueueShield × Drunix — NPCI × Citi Real-Time Payments",
+  "description": "Autonomous queue backpressure, cascade prevention, and distributed ledger settlement platform for NPCI UPI real-time payments.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

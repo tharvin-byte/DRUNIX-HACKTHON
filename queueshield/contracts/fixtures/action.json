@@ -1,0 +1,20 @@
+{
+  "action_id": "act-00012",
+  "rec_id": "rec-0007",
+  "run_id": "r-S3-1-U4",
+  "action_type": "CHECK_BUDGET",
+  "scope": {
+    "psp": "P1"
+  },
+  "params": {
+    "rate_per_s": 6.0,
+    "burst": 12,
+    "first_check_delay_ms": 10000,
+    "max_checks": 3,
+    "horizon_ms": 120000,
+    "ledger_wait_ms": 10000
+  },
+  "effective_from_sim_ms": 260000,
+  "expires_sim_ms": null,
+  "origin": "POLICY_DEFAULT"
+}

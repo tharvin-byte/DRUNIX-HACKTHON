@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/network_info.schema.json",
+  "title": "GET :8004/v1/network",
+  "type": "object",
+  "required": [
+    "mode",
+    "channel",
+    "chaincode",
+    "height",
+    "orgs"
+  ],
+  "properties": {
+    "mode": {
+      "enum": [
+        "live",
+        "mock"
+      ]
+    },
+    "channel": {
+      "type": "string"
+    },
+    "chaincode": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "sequence": {
+          "type": "integer"
+        }
+      }
+    },
+    "height": {
+      "type": "integer"
+    },
+    "orgs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mspId": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "PAYER_SIDE_AND_AUTHORITY",
+              "PAYEE_SIDE",
+              "AUTHORITY"
+            ]
+          },
+          "litePeers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "committingPeers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "validationServices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stateDb": {
+            "type": "string"
+          },
+          "transientStore": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "orderers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "submitLatencyMs": {
+      "type": "object",
+      "properties": {
+        "p50": {
+          "type": "number"
+        },
+        "p95": {
+          "type": "number"
+        },
+        "p99": {
+          "type": "number"
+        }
+      }
+    },
+    "updated_wall_iso": {
+      "type": "string"
+    }
+  }
+}

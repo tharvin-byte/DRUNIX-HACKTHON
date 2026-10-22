@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/ledger_open_request.schema.json",
+  "title": "POST /v1/payments (M2 -> M1)",
+  "type": "object",
+  "required": [
+    "txnRef",
+    "idemKeyHash",
+    "payerPsp",
+    "remitterBank",
+    "beneficiaryBank",
+    "runId",
+    "simMs"
+  ],
+  "properties": {
+    "txnRef": {
+      "type": "string"
+    },
+    "idemKeyHash": {
+      "type": "string"
+    },
+    "payerPsp": {
+      "type": "string",
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "remitterBank": {
+      "type": "string",
+      "enum": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5"
+      ]
+    },
+    "beneficiaryBank": {
+      "type": "string",
+      "enum": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5"
+      ]
+    },
+    "runId": {
+      "$ref": "common.schema.json#/$defs/RunId"
+    },
+    "simMs": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    }
+  },
+  "additionalProperties": false
+}

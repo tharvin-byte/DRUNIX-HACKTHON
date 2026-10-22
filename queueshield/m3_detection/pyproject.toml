@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qdet"
+version = "0.1.0"
+description = "QueueShield M3 Detection: features, detectors, localizer, forecaster, incidents (simulation only)"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy==2.4.6",
+  "pyyaml==6.0.3",
+  "jsonschema==4.26.0",
+  "referencing==0.37.0",
+  "fastapi==0.151.0",
+  "uvicorn==0.54.0",
+  "httpx==0.28.1",
+  "httpx-sse==0.4.3",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+
+[tool.setuptools]
+packages = ["qdet", "qdet.detectors", "qdet.forecast"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]

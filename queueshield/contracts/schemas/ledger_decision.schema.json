@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/ledger_decision.schema.json",
+  "title": "Decision record (M4 -> M1)",
+  "type": "object",
+  "required": [
+    "id",
+    "recId",
+    "decision",
+    "operator",
+    "actionsApproved",
+    "modelVersions",
+    "featuresSha256",
+    "decidedSimMs"
+  ],
+  "properties": {
+    "docType": {
+      "const": "decision"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^dec-[0-9]{5}$"
+    },
+    "recId": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "APPROVE_ALL",
+        "APPROVE_SELECTED",
+        "REJECT"
+      ]
+    },
+    "operator": {
+      "type": "string"
+    },
+    "actionsApproved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "modelVersions": {
+      "type": "object"
+    },
+    "featuresSha256": {
+      "type": "string"
+    },
+    "decidedSimMs": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    },
+    "recordedAt": {
+      "type": "integer"
+    },
+    "recorderMspId": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

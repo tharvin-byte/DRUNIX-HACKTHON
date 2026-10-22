@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: qsim
+Version: 0.1.0
+Summary: QueueShield M2 Simulator: reactive UPI-like network, scenarios, universes, arena (simulation only)
+Requires-Python: >=3.11
+Requires-Dist: numpy==2.4.6
+Requires-Dist: pyyaml==6.0.3
+Requires-Dist: jsonschema==4.26.0
+Requires-Dist: referencing==0.37.0
+Requires-Dist: fastapi==0.151.0
+Requires-Dist: uvicorn==0.54.0
+Requires-Dist: httpx==0.28.1
+Provides-Extra: test
+Requires-Dist: pytest==9.1.1; extra == "test"

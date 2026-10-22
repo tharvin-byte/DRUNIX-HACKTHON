@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/lockstep.schema.json",
+  "title": "Batch lockstep messages for the arena (M2 drives M3 and M4)",
+  "$defs": {
+    "DetectTickRequest": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "universe",
+        "tick_sim_ms",
+        "events"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "common.schema.json#/$defs/RunId"
+        },
+        "universe": {
+          "$ref": "common.schema.json#/$defs/Universe"
+        },
+        "tick_sim_ms": {
+          "$ref": "common.schema.json#/$defs/SimMs"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "payment_event.schema.json"
+          }
+        }
+      }
+    },
+    "ControlTickRequest": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "tick_sim_ms",
+        "snapshot",
+        "ledger_events"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "common.schema.json#/$defs/RunId"
+        },
+        "tick_sim_ms": {
+          "$ref": "common.schema.json#/$defs/SimMs"
+        },
+        "snapshot": {
+          "$ref": "segment_state.schema.json"
+        },
+        "ledger_events": {
+          "type": "array",
+          "items": {
+            "$ref": "ledger_event.schema.json"
+          }
+        }
+      }
+    },
+    "ControlTickResponse": {
+      "type": "object",
+      "required": [
+        "recommendations",
+        "actions",
+        "advisories"
+      ],
+      "properties": {
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "$ref": "recommendation.schema.json"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "action.schema.json"
+          }
+        },
+        "advisories": {
+          "type": "array",
+          "items": {
+            "$ref": "advisory.schema.json"
+          }
+        }
+      }
+    },
+    "ResetRequest": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "mode"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "common.schema.json#/$defs/RunId"
+        },
+        "mode": {
+          "enum": [
+            "live",
+            "batch"
+          ]
+        },
+        "operator_mode": {
+          "enum": [
+            "human",
+            "auto"
+          ]
+        },
+        "operator_delay_s": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

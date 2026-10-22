@@ -1,0 +1,541 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/segment_state.schema.json",
+  "title": "Per-tick detection snapshot (M3 -> M4, M5)",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "universe",
+    "tick_sim_ms",
+    "global_state",
+    "segments",
+    "localization",
+    "detector_alerts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/RunId"
+    },
+    "universe": {
+      "$ref": "common.schema.json#/$defs/Universe"
+    },
+    "tick_sim_ms": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    },
+    "global_state": {
+      "enum": [
+        "MONITORING",
+        "WARNING",
+        "CRITICAL",
+        "RECOVERING",
+        "DEGRADED_MONITORING"
+      ]
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "segment_id",
+          "eligible",
+          "flags",
+          "features",
+          "z",
+          "signals",
+          "surge",
+          "d0_alert",
+          "d3_score",
+          "state"
+        ],
+        "properties": {
+          "segment_id": {
+            "$ref": "common.schema.json#/$defs/SegmentId"
+          },
+          "eligible": {
+            "type": "boolean"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "warming_up",
+                "low_volume",
+                "no_data",
+                "model_degraded",
+                "baseline_frozen"
+              ]
+            }
+          },
+          "features": {
+            "type": "object",
+            "properties": {
+              "arrival_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "fresh_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "raf": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "success_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "timeout_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "near_timeout_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "reject_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p50_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p95_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p99_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "latency_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "pending_count": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "pending_frac": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "queue_depth": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "queue_growth": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "utilisation": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "queue_delay_est_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "orbit_proxy": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "status_check_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "switch_status_util": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "load_over_capacity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ledger_open_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ledger_unresolved": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "z": {
+            "type": "object",
+            "properties": {
+              "arrival_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "fresh_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "raf": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "success_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "timeout_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "near_timeout_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "reject_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p50_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p95_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p99_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "latency_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "pending_count": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "pending_frac": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "queue_depth": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "queue_growth": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "utilisation": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "queue_delay_est_ms": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "orbit_proxy": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "status_check_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "switch_status_util": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "load_over_capacity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ledger_open_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ledger_unresolved": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "signals": {
+            "type": "object",
+            "required": [
+              "lat",
+              "to",
+              "near_to",
+              "q",
+              "raf",
+              "rej"
+            ],
+            "properties": {
+              "lat": {
+                "type": "boolean"
+              },
+              "to": {
+                "type": "boolean"
+              },
+              "near_to": {
+                "type": "boolean"
+              },
+              "q": {
+                "type": "boolean"
+              },
+              "raf": {
+                "type": "boolean"
+              },
+              "rej": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "surge": {
+            "type": "boolean"
+          },
+          "d0_alert": {
+            "type": "boolean"
+          },
+          "d3_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "state": {
+            "enum": [
+              "MONITORING",
+              "WARNING",
+              "CRITICAL",
+              "RECOVERING",
+              "DEGRADED_MONITORING"
+            ]
+          },
+          "p_stuck": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "forecast_state": {
+            "enum": [
+              "CALM",
+              "WATCH",
+              "CRITICAL",
+              null
+            ]
+          },
+          "phase_point": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "delay_frac": {
+                "type": "number"
+              },
+              "orbit_frac": {
+                "type": "number"
+              }
+            }
+          },
+          "countdown_s_estimate": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "localization": {
+      "type": "object",
+      "required": [
+        "verdict",
+        "candidates",
+        "confidence",
+        "total_excess"
+      ],
+      "properties": {
+        "verdict": {
+          "enum": [
+            "PSP_SIDE",
+            "BANK_SIDE",
+            "ROUTE_SPECIFIC",
+            "SWITCH_STATUS_OVERLOAD",
+            "MULTI_FAULT",
+            "PLATFORM_WIDE",
+            "INSUFFICIENT_EVIDENCE"
+          ]
+        },
+        "primary_segment_id": {
+          "oneOf": [
+            {
+              "$ref": "common.schema.json#/$defs/SegmentId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "segment_id": {
+                "$ref": "common.schema.json#/$defs/SegmentId"
+              },
+              "share": {
+                "type": "number"
+              },
+              "lift": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "total_excess": {
+          "type": "number"
+        }
+      }
+    },
+    "detector_alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "detector",
+          "segment_id",
+          "first_alert_sim_ms"
+        ],
+        "properties": {
+          "detector": {
+            "enum": [
+              "D0",
+              "D1",
+              "D2",
+              "D3"
+            ]
+          },
+          "segment_id": {
+            "$ref": "common.schema.json#/$defs/SegmentId"
+          },
+          "first_alert_sim_ms": {
+            "$ref": "common.schema.json#/$defs/SimMs"
+          }
+        }
+      }
+    },
+    "incidents": {
+      "type": "array",
+      "items": {
+        "$ref": "incident.schema.json"
+      }
+    }
+  },
+  "additionalProperties": false
+}

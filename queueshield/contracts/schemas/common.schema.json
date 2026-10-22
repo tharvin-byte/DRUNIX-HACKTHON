@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/common.schema.json",
+  "title": "Common definitions",
+  "$defs": {
+    "Psp": {
+      "type": "string",
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "Bank": {
+      "type": "string",
+      "enum": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5"
+      ]
+    },
+    "SegmentId": {
+      "type": "string",
+      "pattern": "^(platform|psp|bank|route|switch):(P[1-3]|\\*):(B[1-5]|\\*)$"
+    },
+    "SimMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "Universe": {
+      "type": "string",
+      "enum": [
+        "U0",
+        "U1",
+        "U2",
+        "U3",
+        "U4"
+      ]
+    },
+    "Scenario": {
+      "type": "string",
+      "enum": [
+        "S0",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ]
+    },
+    "RunId": {
+      "type": "string",
+      "pattern": "^r-S[0-8]-[0-9]+-U[0-4](-[a-z0-9]+)?$"
+    },
+    "ModelVersions": {
+      "type": "object",
+      "properties": {
+        "detector": {
+          "type": "string"
+        },
+        "forecaster": {
+          "type": "string"
+        },
+        "localizer": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Reason": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "TIMEOUT_UP",
+            "NEAR_TIMEOUT_UP",
+            "LATENCY_UP",
+            "RAF_UP",
+            "QUEUE_GROWING",
+            "REJECTS_UP",
+            "PENDING_BACKLOG",
+            "SWITCH_STATUS_SATURATED",
+            "LEDGER_UNRESOLVED_UP"
+          ]
+        },
+        "observed": {
+          "type": "number"
+        },
+        "baseline": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/ledger_attest_request.schema.json",
+  "title": "POST /v1/payments/{txnRef}/attest (M2 -> M1)",
+  "type": "object",
+  "required": [
+    "kind",
+    "simMs"
+  ],
+  "properties": {
+    "kind": {
+      "enum": [
+        "DEBIT",
+        "CREDIT",
+        "FAILURE_REMITTER",
+        "FAILURE_BENEFICIARY",
+        "REVERSAL"
+      ]
+    },
+    "simMs": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    },
+    "reasonCode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

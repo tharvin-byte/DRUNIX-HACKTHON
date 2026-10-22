@@ -1,0 +1,12 @@
+# docs/M2_SIMULATOR.md §9. Frozen after calibration (tag sim-frozen). Every value is a simulator analogue.
+topology: {psps: [P1, P2, P3], psp_shares: [0.40, 0.35, 0.25], banks: [B1, B2, B3, B4, B5], bank_shares: [0.30, 0.25, 0.20, 0.15, 0.10]}
+kinds: {P2P: 0.45, P2M: 0.55}                 # PAYOUT only in S8
+psp: {workers: [46, 40, 29], q_max: 400, t_psp_mean_ms: 60, t_psp_cv: 0.5, reject_ms: 5, shed_cost_ms: 1, starvation_guard_ms: 2000}
+bank: {leg_mean_ms: 150, leg_cv: 0.6, bd_rate: 0.02, td_rate: [0.004, 0.006, 0.008, 0.010, 0.012], reversal_delay_ms: 20000}
+switch: {status_workers: 4, status_mean_ms: 50, status_cv: 0.4, status_q_max: 2000, status_timeout_ms: 2000, status_bank_cost_ms: 20, slowdown_alpha: 3.0, slowdown_u0: 0.85, overload_reply_ms: 5}
+demand: {fresh_rate_per_s: 165}               # baseline PSP utilisation ~0.5-0.55
+client: {timeout_ms: 3000, naive_share_governed_universes: 0.30, max_attempts_tape: 6}
+run: {length_ms: 600000, warmup_ms: 120000, tick_ms: 5000, snapshot_ms: 1000, drain_ms: 300000, goodput_deadline_ms: 30000}
+ledger_model: {submit_p50_ms: 120, submit_p95_ms: 400, event_lag_p50_ms: 50}
+default_budget: {rate_per_s: 10.0, burst: 20, first_check_delay_ms: 10000, max_checks: 3, horizon_ms: 120000, ledger_wait_ms: 10000}
+live: {demo_rate_factor: 0.15, action_poll_s: 1.0}

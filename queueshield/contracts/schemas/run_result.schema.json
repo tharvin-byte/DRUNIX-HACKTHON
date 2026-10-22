@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/run_result.schema.json",
+  "title": "Batch run result (M2 -> M3 training, M5 arena)",
+  "type": "object",
+  "required": [
+    "run_id",
+    "scenario",
+    "seed",
+    "universe",
+    "config_sha256",
+    "sim_version",
+    "metrics",
+    "ground_truth",
+    "files"
+  ],
+  "properties": {
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/RunId"
+    },
+    "scenario": {
+      "type": "string",
+      "enum": [
+        "S0",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ]
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "universe": {
+      "type": "string",
+      "enum": [
+        "U0",
+        "U1",
+        "U2",
+        "U3",
+        "U4"
+      ]
+    },
+    "config_sha256": {
+      "type": "string"
+    },
+    "sim_version": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "peak_queue": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "excess_retries": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "recovery_time_s": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unique_success": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "duplicate_commits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "peak_switch_checks_per_s": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "switch_checks_total": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "switch_checks_per_unknown": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unknowns_total": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "median_resolve_s": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "p95_resolve_s": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "escalated": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "harmful_failovers": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "tat_breaches": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "goodput_min_frac": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "ground_truth": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "incident_id",
+          "onset_ms",
+          "end_ms",
+          "level",
+          "kind",
+          "is_incident"
+        ],
+        "properties": {
+          "incident_id": {
+            "type": "string"
+          },
+          "onset_ms": {
+            "type": "integer"
+          },
+          "end_ms": {
+            "type": "integer"
+          },
+          "level": {
+            "enum": [
+              "psp",
+              "bank",
+              "route",
+              "switch",
+              "platform"
+            ]
+          },
+          "psp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bank": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "magnitude": {
+            "type": "number"
+          },
+          "is_incident": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "object",
+      "required": [
+        "events"
+      ],
+      "properties": {
+        "events": {
+          "type": "string"
+        },
+        "ground_truth": {
+          "type": "string"
+        },
+        "ticks": {
+          "type": "string"
+        },
+        "timeseries": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

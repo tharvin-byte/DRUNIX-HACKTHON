@@ -1,0 +1,8 @@
+# One owner per module folder. Fill in GitHub handles (docs/90_PLAN_EVAL_RISKS.md §1).
+/m1_ledger/     @TODO-m1-owner
+/m2_simulator/  @TODO-m2-owner
+/m3_detection/  @TODO-m3-owner
+/m4_control/    @TODO-m4-owner
+/m5_console/    @TODO-m5-owner
+/contracts/     @TODO-all-owners
+/docs/          @TODO-team-lead

@@ -1,0 +1,34 @@
+{
+  "incident_id": "inc-0003",
+  "run_id": "r-S3-1-U4",
+  "segment_id": "bank:*:B3",
+  "state": "OPEN",
+  "severity": "CRITICAL",
+  "opened_sim_ms": 250000,
+  "updated_sim_ms": 260000,
+  "closed_sim_ms": null,
+  "verdict": "BANK_SIDE",
+  "p_stuck": 0.41,
+  "countdown_s_estimate": 38,
+  "reasons": [
+    {
+      "code": "TIMEOUT_UP",
+      "observed": 0.08,
+      "baseline": 0.01,
+      "z": 5.1
+    },
+    {
+      "code": "LATENCY_UP",
+      "observed": 2.9,
+      "baseline": 1.0,
+      "z": 4.2
+    }
+  ],
+  "confidence": 0.81,
+  "model_versions": {
+    "detector": "d3-rules-v1",
+    "forecaster": "grid-v1",
+    "localizer": "lift-v1"
+  },
+  "features_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

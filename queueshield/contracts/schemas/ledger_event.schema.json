@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/ledger_event.schema.json",
+  "title": "Ledger event on GET :8004/v1/stream (M1 -> M2, M4, M5)",
+  "type": "object",
+  "required": [
+    "event_id",
+    "block_number",
+    "tx_id",
+    "chaincode",
+    "name",
+    "payload",
+    "received_wall_iso"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "description": "<tx_id>:<name>"
+    },
+    "block_number": {
+      "type": "integer"
+    },
+    "tx_id": {
+      "type": "string"
+    },
+    "chaincode": {
+      "const": "queueshield"
+    },
+    "name": {
+      "enum": [
+        "PaymentUpdated",
+        "TATBreach",
+        "AdvisoryIssued",
+        "AdvisoryRevoked",
+        "DecisionRecorded"
+      ]
+    },
+    "payload": {
+      "type": "object"
+    },
+    "received_wall_iso": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "mock": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

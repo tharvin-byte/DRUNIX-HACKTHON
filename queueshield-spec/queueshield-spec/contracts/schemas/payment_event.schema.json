@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/payment_event.schema.json",
+  "title": "Payment event (M2 -> M3, M5). Never contains amounts, accounts, VPAs or names.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "run_id",
+    "universe",
+    "event_type",
+    "sim_ms"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "description": "<run_id>-<8-digit counter>, unique, deterministic"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/RunId"
+    },
+    "universe": {
+      "$ref": "common.schema.json#/$defs/Universe"
+    },
+    "event_type": {
+      "enum": [
+        "PAYMENT_INITIATED",
+        "ATTEMPT_SENT",
+        "ATTEMPT_OUTCOME",
+        "RETRY_SCHEDULED",
+        "STATUS_CHECK_SENT",
+        "STATUS_CHECK_RESULT",
+        "LEDGER_OPENED",
+        "LEDGER_RESOLVED",
+        "PSP_SNAPSHOT",
+        "SWITCH_SNAPSHOT",
+        "ACTION_APPLIED",
+        "PAYMENT_CLOSED"
+      ]
+    },
+    "sim_ms": {
+      "$ref": "common.schema.json#/$defs/SimMs"
+    },
+    "payment_id": {
+      "type": "string",
+      "pattern": "^p-[0-9]{7}$"
+    },
+    "attempt_id": {
+      "type": "string",
+      "pattern": "^p-[0-9]{7}-a[0-9]+$"
+    },
+    "attempt_no": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "is_retry": {
+      "type": "boolean"
+    },
+    "retry_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "idempotency_key": {
+      "type": "string"
+    },
+    "psp": {
+      "$ref": "common.schema.json#/$defs/Psp"
+    },
+    "remitter_bank": {
+      "$ref": "common.schema.json#/$defs/Bank"
+    },
+    "beneficiary_bank": {
+      "$ref": "common.schema.json#/$defs/Bank"
+    },
+    "kind": {
+      "enum": [
+        "P2P",
+        "P2M",
+        "PAYOUT"
+      ]
+    },
+    "response_time_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "enum": [
+        "SUCCESS",
+        "DECLINED",
+        "TECH_FAILED",
+        "REJECTED_OVERLOAD",
+        "RETRY_LATER",
+        "CLIENT_TIMEOUT",
+        "PENDING_UNKNOWN",
+        "CONFIRMED_SUCCESS",
+        "CONFIRMED_FAILED",
+        "UNKNOWN"
+      ]
+    },
+    "error_code": {
+      "type": "string"
+    },
+    "client_timeout_ms": {
+      "type": "integer"
+    },
+    "delay_ms": {
+      "type": "integer"
+    },
+    "queue_depth": {
+      "type": "integer"
+    },
+    "active_workers": {
+      "type": "integer"
+    },
+    "workers": {
+      "type": "integer"
+    },
+    "switch_status_queue": {
+      "type": "integer"
+    },
+    "switch_status_active": {
+      "type": "integer"
+    },
+    "switch_status_capacity_per_s": {
+      "type": "number"
+    },
+    "switch_slowdown_factor": {
+      "type": "number"
+    },
+    "check_no": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ledger_state": {
+      "enum": [
+        "UNKNOWN",
+        "DEBITED",
+        "SUCCESS",
+        "FAILED_NO_DEBIT",
+        "CREDIT_FAILED",
+        "REVERSED",
+        "DISPUTED"
+      ]
+    },
+    "action_id": {
+      "type": "string"
+    },
+    "action_type": {
+      "type": "string"
+    },
+    "params": {
+      "type": "object"
+    },
+    "close_reason": {
+      "enum": [
+        "CONFIRMED_SUCCESS",
+        "CONFIRMED_FAILED_FINAL",
+        "ABANDONED",
+        "ESCALATED_RECONCILE",
+        "DECLINED"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "ATTEMPT_SENT",
+              "ATTEMPT_OUTCOME",
+              "RETRY_SCHEDULED"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "payment_id",
+          "attempt_id",
+          "attempt_no",
+          "is_retry",
+          "retry_count",
+          "psp",
+          "remitter_bank",
+          "beneficiary_bank"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "ATTEMPT_OUTCOME"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "status",
+          "response_time_ms",
+          "client_timeout_ms"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "STATUS_CHECK_SENT",
+              "STATUS_CHECK_RESULT"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "payment_id",
+          "psp",
+          "check_no"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "PSP_SNAPSHOT"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "psp",
+          "queue_depth",
+          "active_workers",
+          "workers"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "SWITCH_SNAPSHOT"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "switch_status_queue",
+          "switch_status_active",
+          "switch_status_capacity_per_s",
+          "switch_slowdown_factor"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "LEDGER_OPENED",
+              "LEDGER_RESOLVED"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "payment_id",
+          "psp",
+          "remitter_bank",
+          "beneficiary_bank"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "ACTION_APPLIED"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "action_id",
+          "action_type",
+          "params"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://queueshield.local/schemas/scenario_command.schema.json",
+  "title": "Simulator control (M5 -> M2)",
+  "type": "object",
+  "required": [
+    "command"
+  ],
+  "properties": {
+    "command": {
+      "enum": [
+        "START",
+        "PAUSE",
+        "RESUME",
+        "RESET",
+        "SPEED"
+      ]
+    },
+    "scenario": {
+      "type": "string",
+      "enum": [
+        "S0",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ]
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "universe": {
+      "type": "string",
+      "enum": [
+        "U0",
+        "U1",
+        "U2",
+        "U3",
+        "U4"
+      ]
+    },
+    "speed": {
+      "enum": [
+        1,
+        2,
+        4
+      ]
+    },
+    "overrides": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "START"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "scenario",
+          "seed",
+          "universe"
+        ]
+      }
+    }
+  ]
+}
