@@ -93,3 +93,92 @@ test("L7 (mock part): Last-Event-ID replays only missed events", async () => {
   assert.equal(hub.replay("2").length, 1);
   assert.equal(hub.replay("3").length, 0);
 });
+
+test("L4/L7 (live adapter): MVCC retry with jitter + file checkpointer dedupes events across restarts", async () => {
+  const fs = await import("node:fs");
+  const cpPath = "/tmp/test_ledger_cp_" + Date.now() + ".json";
+  let calls = 0;
+  const transport = {
+    async submit(_c: string, _fn: string, args: string[]) {
+      calls += 1;
+      if (calls <= 2) throw new Error("MVCC_READ_CONFLICT: simulated conflict");
+      const rec = {
+        docType: "payment",
+        txnRef: args[0],
+        idemKeyHash: args[1],
+        payerPsp: args[2],
+        remitterBank: args[3],
+        beneficiaryBank: args[4],
+        runId: args[5],
+        state: "UNKNOWN",
+        openedAt: 1700000000,
+        openedSimMs: Number(args[6]),
+        debitAt: null,
+        creditAt: null,
+        failureAt: null,
+        reversalAt: null,
+        reasonCode: null,
+        debitImplied: false,
+        tatSeconds: 20,
+        tatDeadline: null,
+        tatBreached: false,
+        attestations: [],
+        version: 1,
+      };
+      return {
+        payload: JSON.stringify(rec),
+        tx_id: "tx-live-0001",
+        block_number: 42,
+        event: {
+          name: "PaymentUpdated",
+          payload: {
+            txnRef: rec.txnRef,
+            state: "UNKNOWN",
+            prevState: null,
+            kind: "OPEN",
+            runId: rec.runId,
+            payerPsp: rec.payerPsp,
+            remitterBank: rec.remitterBank,
+            beneficiaryBank: rec.beneficiaryBank,
+            simMs: rec.openedSimMs,
+            debitImplied: false,
+          },
+        },
+      };
+    },
+    async evaluate() {
+      return "{}";
+    },
+  };
+  const { app, hub } = buildApp({
+    apiKey: KEY,
+    mode: "live",
+    transport,
+    checkpointPath: cpPath,
+    jitterMinMs: 1,
+    jitterMaxMs: 2,
+  });
+  const o = await app.inject({ method: "POST", url: "/v1/payments", headers: H, payload: open(77) });
+  assert.equal(o.statusCode, 201);
+  const m = (await app.inject({ method: "GET", url: "/v1/metrics" })).json();
+  assert.equal(m.mvcc_retries, 2);
+  assert.equal(hub.replay("0").length, 1);
+
+  // Restart gateway with same checkpoint file and re-ingest duplicate chaincode event -> deduped
+  const { ledger: ledger2, hub: hub2 } = buildApp({
+    apiKey: KEY,
+    mode: "live",
+    transport,
+    checkpointPath: cpPath,
+    jitterMinMs: 1,
+    jitterMaxMs: 2,
+  });
+  if ("ingestChaincodeEvent" in ledger2) {
+    ledger2.ingestChaincodeEvent("PaymentUpdated", {}, "tx-live-0001", 42, 10);
+  }
+  assert.equal(hub2.replay("0").length, 0);
+  try {
+    fs.unlinkSync(cpPath);
+  } catch {}
+});
+

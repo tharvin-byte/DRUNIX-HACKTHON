@@ -1,0 +1,13 @@
+[
+ {
+  "incident_id": "gt-1",
+  "onset_ms": 250988,
+  "end_ms": 325172,
+  "level": "bank",
+  "psp": "*",
+  "bank": "B3",
+  "kind": "verification_storm",
+  "magnitude": 0.3339219706886193,
+  "is_incident": true
+ }
+]

@@ -53,6 +53,7 @@ class ModelLedger:
     def __init__(self) -> None:
         self.block = 0
         self.events: list = []
+        self.revoked: list = []
 
     def write(self, kind: str, body: dict) -> dict:
         self.block += 1
@@ -65,7 +66,15 @@ class ModelLedger:
         return {"tx_id": tx, "block_number": self.block}
 
     def revoke(self, adv_id: str, reason: str) -> dict:
-        return {"tx_id": None}
+        self.block += 1
+        tx = hashlib.sha256(f"revoke:{adv_id}".encode()).hexdigest()[:16]
+        self.revoked.append(adv_id)
+        self.events.append({"event_id": f"{tx}:AdvisoryRevoked", "block_number": self.block, "tx_id": tx,
+                            "chaincode": "queueshield", "name": "AdvisoryRevoked",
+                            "payload": {"id": adv_id, "reason": reason},
+                            "received_wall_iso": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+                            "mock": True})
+        return {"tx_id": tx, "block_number": self.block}
 
     def drain(self) -> list:
         ev, self.events = self.events, []

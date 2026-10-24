@@ -10,12 +10,12 @@ def _nan_none(x):
     return None if x is None or (isinstance(x, float) and not np.isfinite(x)) else float(x)
 
 
-def run_metrics(e: Engine) -> dict:
+def run_metrics(e: Engine, paired_u2_metrics: dict | None = None) -> dict:
     gt = e.ground_truth_stats()
     h = e.horizon // 1000
     goodput = e.ts["goodput"][:h]
-    warm = e.cfg.run.warmup_ms // 1000
-    base = float(goodput[warm // 2:warm].mean()) if warm > 2 else float(goodput.mean())
+    warm = min(len(goodput), e.cfg.run.warmup_ms // 1000)
+    base = float(goodput[warm // 2:warm].mean()) if warm > 2 else (float(goodput.mean()) if len(goodput) else 0.0)
     # 10 s goodput windows after warm-up, relative to the warm-up baseline
     roll = np.convolve(goodput, np.ones(10) / 10, mode="valid")[warm:] if len(goodput) > warm + 10 else np.array([])
     goodput_min_frac = float(roll.min() / base) if base > 0 and roll.size else None
@@ -35,8 +35,30 @@ def run_metrics(e: Engine) -> dict:
     unknowns = gt["unknowns"]
     unique_success = sum(1 for p in e.payments if any(a.credited for a in p.attempts)
                          and p.resolved_ms is not None and p.resolved_ms - p.t0 <= e.cfg.run.goodput_deadline_ms)
+    # TAT breaches: debited attempt that was neither credited nor reversed within the TAT analogue (reversal_delay_ms)
+    tat_ms = e.cfg.bank.reversal_delay_ms
+    tat_breaches = 0
+    for p in e.payments:
+        if any(a.credited for a in p.attempts):
+            continue
+        for a in p.attempts:
+            if a.debited and (not a.reversed or (p.resolved_ms is not None and p.resolved_ms - a.t_send > tat_ms)):
+                tat_breaches += 1
+                break
+
+    peak_q = float(e.ts["queue"].sum(axis=0).max())
+    harmful_failovers: float | None = 0.0
+    if paired_u2_metrics is not None:
+        u2_q = paired_u2_metrics.get("peak_queue") or 0.0
+        u2_rec = paired_u2_metrics.get("recovery_time_s")
+        worse_q = peak_q > u2_q * 1.05
+        worse_rec = (recovery is None and u2_rec is not None) or (
+            recovery is not None and u2_rec is not None and recovery > u2_rec + 5.0
+        )
+        harmful_failovers = 1.0 if (worse_q or worse_rec) else 0.0
+
     return {
-        "peak_queue": float(e.ts["queue"].sum(axis=0).max()),
+        "peak_queue": peak_q,
         "excess_retries": float(gt["attempts"] - gt["payments"]),
         "recovery_time_s": recovery,
         "unique_success": float(unique_success),
@@ -48,8 +70,8 @@ def run_metrics(e: Engine) -> dict:
         "median_resolve_s": _nan_none(float(np.median(resolve))) if resolve else None,
         "p95_resolve_s": _nan_none(float(np.percentile(resolve, 95))) if resolve else None,
         "escalated": float(gt["escalated"]),
-        "harmful_failovers": None,      # computed by the arena against the paired U2 run (BUILD)
-        "tat_breaches": None,           # TODO(M2): debited and neither credited nor reversed within the TAT analogue
+        "harmful_failovers": harmful_failovers,
+        "tat_breaches": float(tat_breaches),
         "goodput_min_frac": goodput_min_frac,
     }
 

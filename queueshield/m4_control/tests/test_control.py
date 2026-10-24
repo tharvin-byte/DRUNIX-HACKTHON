@@ -183,3 +183,100 @@ def test_c8_simulated_operator_delay_and_never_blocked():
     low.on_tick(snapshot(incidents=[incident(confidence=0.4)]))
     low.on_tick(snapshot(t=300_000))
     assert low.pending()                                       # confidence < 0.6 waits
+
+
+def test_m4_t01_ledger_event_republishes_decision_with_tx_and_block():
+    published = []
+    led = ModelLedger()
+    r = RunControl(CFG, "r-S3-1-U4", led, "human", publish=lambda ev, data: published.append((ev, data)))
+    r.on_tick(snapshot(incidents=[incident()]))
+    rec = r.pending()[0]
+    res = r.decide({"rec_id": rec["rec_id"], "decision": "APPROVE_ALL", "operator": "saran", "actions_selected": []})
+    dec_id = res["resp"]["decision_id"]
+    assert dec_id.startswith("dec-")
+    assert res["resp"]["ledger"]["decision_tx"] is not None
+    assert res["resp"]["ledger"]["block_number"] is not None
+
+    # Feed a live DecisionRecorded event with a new block number and assert it re-publishes event: decision
+    published.clear()
+    r.on_ledger_event({
+        "event_id": "tx-live-99:DecisionRecorded",
+        "block_number": 77,
+        "tx_id": "tx-live-99",
+        "chaincode": "queueshield",
+        "name": "DecisionRecorded",
+        "payload": {"id": dec_id, "recId": rec["rec_id"]},
+        "received_wall_iso": "2026-10-20T12:00:00Z",
+        "mock": True,
+    })
+    dec_events = [d for ev, d in published if ev == "decision"]
+    assert len(dec_events) == 1
+    assert dec_events[0]["ledger"]["decision_tx"] == "tx-live-99"
+    assert dec_events[0]["ledger"]["block_number"] == 77
+
+
+def test_m4_t02_quieter_budget_publication_honours_min_interval():
+    r = _run()
+    out1 = r.on_tick(snapshot(t=5_000, status_rate=5.0))
+    budgets1 = [a for a in out1["actions"] if a["action_type"] == "CHECK_BUDGET"]
+    assert len(budgets1) == 3  # always publishes on first tick
+
+    # Tick 10s later (< 30s min_publish_interval_s) even with a large change -> quiet
+    out2 = r.on_tick(snapshot(t=15_000, status_rate=50.0))
+    budgets2 = [a for a in out2["actions"] if a["action_type"] == "CHECK_BUDGET"]
+    assert len(budgets2) == 0
+
+    # Tick at 35_000 (>= 30s after 5_000) with >10% change -> publishes
+    out3 = r.on_tick(snapshot(t=35_000, status_rate=50.0))
+    budgets3 = [a for a in out3["actions"] if a["action_type"] == "CHECK_BUDGET"]
+    assert len(budgets3) == 3
+
+
+def test_c9_m4_t03_rollback_proposal_after_6_clean_ticks_and_revokes_advisory():
+    led = ModelLedger()
+    r = _run(led)
+    r.on_tick(snapshot(t=200_000, incidents=[incident()]))
+    rec = r.pending()[0]
+    res = r.decide({
+        "rec_id": rec["rec_id"],
+        "decision": "APPROVE_SELECTED",
+        "operator": "saran",
+        "actions_selected": ["THROTTLE_RETRIES"],
+    })
+    act_id = res["actions"][0]["action_id"]
+    r.mark_applied(act_id, {"sim_ms": 201_000, "result": "APPLIED", "detail": ""})
+
+    # 5 clean ticks -> no rollback yet
+    for step in range(1, 6):
+        out = r.on_tick(snapshot(t=200_000 + step * 5_000, global_state="MONITORING"))
+        assert out["recommendations"] == []
+
+    # 6th clean tick -> ROLLBACK recommendation proposed
+    out6 = r.on_tick(snapshot(t=230_000, global_state="MONITORING"))
+    assert len(out6["recommendations"]) == 1
+    rb_rec = out6["recommendations"][0]
+    assert rb_rec["actions"][0]["action_type"] == "ROLLBACK"
+    assert rb_rec["actions"][0]["params"]["action_id"] == act_id
+
+    # Approving ROLLBACK enqueues ROLLBACK action and revokes advisories in ModelLedger
+    rb_res = r.decide({
+        "rec_id": rb_rec["rec_id"],
+        "decision": "APPROVE_ALL",
+        "operator": "saran",
+        "actions_selected": [],
+    })
+    assert rb_res["actions"][0]["action_type"] == "ROLLBACK"
+    assert len(led.revoked) >= 1
+
+
+def test_m4_t04_merges_duplicate_pending_bank_side_recommendations():
+    r = _run()
+    inc1 = incident("route:P1:B3", "BANK_SIDE", "WARNING")
+    inc1["incident_id"] = "inc-0001"
+    inc2 = incident("bank:*:B3", "BANK_SIDE", "CRITICAL")
+    inc2["incident_id"] = "inc-0002"
+    r.on_tick(snapshot(t=200_000, incidents=[inc1, inc2]))
+    pending = r.pending()
+    assert len(pending) == 1
+    assert pending[0]["incident_id"] == "inc-0002"
+

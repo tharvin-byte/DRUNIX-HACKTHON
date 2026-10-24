@@ -1,8 +1,7 @@
 """Live runner (docs/M2_SIMULATOR.md §12): the engine advanced by wall clock x speed in a thread, events published
 on the SSE hub, approved actions polled from M4 every `live.action_poll_s` and acknowledged.
 
-Ledger: only LEDGER_MODE=model is implemented here (the in-sim latency model). LEDGER_MODE=live|mock (HTTP to the
-M1 gateway, docs/01_SYSTEM.md §5) is a TODO in ledger_bridge.py; until then health reports `degraded`.
+Ledger: supports LEDGER_MODE=model|mock|live via LedgerBridge (docs/01_SYSTEM.md §5).
 """
 from __future__ import annotations
 
@@ -17,6 +16,7 @@ import httpx
 from qsim import config as config_mod
 from qsim import contracts, ids, jsonlog, scenarios
 from qsim.engine import Engine
+from qsim.ledger_bridge import LedgerBridge
 from qsim.sse import SseHub
 
 STEP_WALL_S = 0.1
@@ -24,7 +24,8 @@ STEP_WALL_S = 0.1
 
 class LiveRun:
     def __init__(self, hub: SseHub, scenario: str, seed: int, universe: str, speed: int = 1,
-                 overrides: Optional[dict] = None, control_url: Optional[str] = None) -> None:
+                 overrides: Optional[dict] = None, control_url: Optional[str] = None,
+                 ledger_mode: str = "model") -> None:
         base = config_mod.load(overrides=(overrides or {}).get("config"))
         cfg = replace(base, fresh_rate_per_s=base.fresh_rate_per_s * base.live.demo_rate_factor)
         self.cfg = cfg
@@ -32,7 +33,8 @@ class LiveRun:
         self.run_id = ids.run_id(scenario, seed, universe, suffix="live")
         self.scenario, self.seed, self.universe, self.speed = scenario, seed, universe, speed
         self.hub = hub
-        self.engine = Engine(cfg, self.spec, seed, universe, self.run_id, emit=None)
+        self.bridge = LedgerBridge(self.run_id, mode=ledger_mode) if universe == "U4" else None
+        self.engine = Engine(cfg, self.spec, seed, universe, self.run_id, emit=None, ledger_bridge=self.bridge)
         self.state = "IDLE"
         self.achieved_speed = float(speed)
         self.control_url = control_url
@@ -65,6 +67,8 @@ class LiveRun:
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=5)
+        if self.bridge:
+            self.bridge.close()
 
     def _publish(self, events: list) -> None:
         for e in events:
@@ -116,7 +120,9 @@ class LiveRun:
                     continue
                 sim_target = min(end, t0_sim + max(1, int((now_wall - t0_wall) * 1000.0 * self.speed)))
                 with self._lock:
+                    self.engine.poll_ledger_bridge()
                     self.engine.run_until(sim_target)
+                    self.engine.poll_ledger_bridge()
                     ev = self.engine.drain_events()
                 elapsed = max(1e-3, time.monotonic() - t0_wall)
                 self.achieved_speed = round(((self.engine.now - t0_sim) / 1000.0) / elapsed, 2)
@@ -132,3 +138,5 @@ class LiveRun:
             jsonlog.error("live run crashed", run_id=self.run_id, err=self.error)
         finally:
             http.close()
+            if self.bridge:
+                self.bridge.close()

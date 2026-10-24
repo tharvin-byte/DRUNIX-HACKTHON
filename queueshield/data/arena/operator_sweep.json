@@ -1,0 +1,49 @@
+{
+  "label": "simulation",
+  "scenario": "S4",
+  "seed": 5,
+  "delays_s": [
+    5,
+    15,
+    30,
+    60,
+    120
+  ],
+  "rows": [
+    {
+      "operator_delay_s": 5,
+      "recovery_time_s": 0.0,
+      "excess_retries": 3502.0,
+      "peak_queue": 269.0,
+      "goodput_min_frac": 1.109
+    },
+    {
+      "operator_delay_s": 15,
+      "recovery_time_s": 0.0,
+      "excess_retries": 3537.0,
+      "peak_queue": 400.0,
+      "goodput_min_frac": 1.106
+    },
+    {
+      "operator_delay_s": 30,
+      "recovery_time_s": 0.0,
+      "excess_retries": 3816.0,
+      "peak_queue": 400.0,
+      "goodput_min_frac": 1.111
+    },
+    {
+      "operator_delay_s": 60,
+      "recovery_time_s": 0.0,
+      "excess_retries": 4427.0,
+      "peak_queue": 400.0,
+      "goodput_min_frac": 1.112
+    },
+    {
+      "operator_delay_s": 120,
+      "recovery_time_s": 0.0,
+      "excess_retries": 4427.0,
+      "peak_queue": 400.0,
+      "goodput_min_frac": 1.112
+    }
+  ]
+}

@@ -3,7 +3,7 @@ topology: {psps: [P1, P2, P3], psp_shares: [0.40, 0.35, 0.25], banks: [B1, B2, B
 kinds: {P2P: 0.45, P2M: 0.55}                 # PAYOUT only in S8
 psp: {workers: [46, 40, 29], q_max: 400, t_psp_mean_ms: 60, t_psp_cv: 0.5, reject_ms: 5, shed_cost_ms: 1, starvation_guard_ms: 2000}
 bank: {leg_mean_ms: 150, leg_cv: 0.6, bd_rate: 0.02, td_rate: [0.004, 0.006, 0.008, 0.010, 0.012], reversal_delay_ms: 20000}
-switch: {status_workers: 4, status_mean_ms: 50, status_cv: 0.4, status_q_max: 2000, status_timeout_ms: 2000, status_bank_cost_ms: 20, slowdown_alpha: 3.0, slowdown_u0: 0.85, overload_reply_ms: 5}
+switch: {status_workers: 8, status_mean_ms: 50, status_cv: 0.4, status_q_max: 2000, status_timeout_ms: 2000, status_bank_cost_ms: 0.3, slowdown_alpha: 1.12, slowdown_u0: 0.80, overload_reply_ms: 5}
 demand: {fresh_rate_per_s: 165}               # baseline PSP utilisation ~0.5-0.55
 client: {timeout_ms: 3000, naive_share_governed_universes: 0.30, max_attempts_tape: 6}
 run: {length_ms: 600000, warmup_ms: 120000, tick_ms: 5000, snapshot_ms: 1000, drain_ms: 300000, goodput_deadline_ms: 30000}

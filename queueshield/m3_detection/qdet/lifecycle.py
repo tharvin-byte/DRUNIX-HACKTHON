@@ -4,7 +4,7 @@ OPEN -> MITIGATING (first ACTION_APPLIED in scope) -> RECOVERING (3 improving ti
 a new WARNING on the same segment within 60 s reopens the same id. Segments warned within 30 s that are
 overlap merge, and the localizer's primary names the incident. Guard against the IBM stale-primary bug (a
 recovery-tail alert rewritten to an old primary): the pipeline passes the primary only while that primary
-segment is itself warning.
+segment (or a segment overlapping it) is itself warning.
 """
 from __future__ import annotations
 
@@ -66,10 +66,14 @@ class Lifecycle:
         `primary` (the localizer's segment) is used when it relates to the warning segment, or always with
         `force` (network-wide verdicts: platform or switch anchor)."""
         seg = primary if primary and (force or related(segment_id, primary)) else segment_id
-        inc = next((i for i in self.live() if (related(i.segment_id, seg) or seg in i.merged)
-                    and now - i.last_warning_ms <= self.cfg.merge_s * 1000), None)
+        matching = [
+            i for i in self.live()
+            if (related(i.segment_id, seg) or seg in i.merged or any(related(m, seg) for m in i.merged))
+            and now - i.last_warning_ms <= self.cfg.merge_s * 1000
+        ]
+        inc = matching[0] if matching else None
         if inc is None:
-            inc = next((i for i in self.incidents.values() if i.state == "CLOSED" and i.segment_id == seg
+            inc = next((i for i in self.incidents.values() if i.state == "CLOSED" and related(i.segment_id, seg)
                         and i.closed_ms is not None and now - i.closed_ms <= self.cfg.reopen_s * 1000), None)
             if inc is not None:
                 inc.state, inc.closed_ms = "OPEN", None
@@ -77,15 +81,29 @@ class Lifecycle:
         if inc is None:
             self._n += 1
             inc = Incident(f"inc-{self._n:04d}", seg, now, severity, updated_ms=now)
+            if segment_id != seg:
+                inc.merged.add(segment_id)
             self.incidents[inc.incident_id] = inc
             changed = True
         else:
+            # If primary generalized a route incident to bank/psp/platform/switch, promote segment_id and coalesce
+            if primary is not None and seg == primary and seg != inc.segment_id:
+                inc.merged.add(inc.segment_id)
+                inc.segment_id = seg
+                changed = True
             if segment_id != inc.segment_id:
                 inc.merged.add(segment_id)
             if SEV[severity] > SEV[inc.severity]:
                 inc.severity, changed = severity, True
             if inc.state == "RECOVERING":
                 inc.state, changed = "MITIGATING", True
+            for extra in matching[1:]:
+                inc.merged.add(extra.segment_id)
+                inc.merged |= extra.merged
+                if SEV[extra.severity] > SEV[inc.severity]:
+                    inc.severity = extra.severity
+                self.incidents.pop(extra.incident_id, None)
+                changed = True
         inc.last_warning_ms, inc.clean, inc.improving = now, 0, 0
         return inc, changed
 

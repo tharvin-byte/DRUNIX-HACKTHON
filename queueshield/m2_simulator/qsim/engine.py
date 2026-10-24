@@ -116,7 +116,8 @@ class Psp:
 
 class Engine:
     def __init__(self, cfg: SimConfig, spec: ScenarioSpec, seed: int, universe: str, run_id: Optional[str] = None,
-                 horizon_ms: Optional[int] = None, emit: Optional[Callable[[dict], None]] = None) -> None:
+                 horizon_ms: Optional[int] = None, emit: Optional[Callable[[dict], None]] = None,
+                 ledger_bridge=None) -> None:
         self.cfg, self.spec, self.seed, self.universe = cfg, spec, int(seed), universe
         self.run_id = run_id or ids.run_id(spec.scenario, seed, universe)
         self.horizon = int(horizon_ms if horizon_ms is not None else cfg.run.length_ms)
@@ -137,6 +138,7 @@ class Engine:
         self.naive_share = cfg.client.naive_share_governed_universes if universe in ("U3", "U4") else 0.0
         self.eids = ids.EventIds(self.run_id)
         self._emit_cb = emit
+        self.ledger_bridge = ledger_bridge
         self.events: list = []
         self.now = 0
         self._heap: list = []
@@ -144,6 +146,7 @@ class Engine:
         self._qseq = 0
         self._n_pay = 0
         self.payments: list[Payment] = []
+        self._pay_by_id: dict[str, Payment] = {}
         self._mu_psp = lognorm(cfg.psp.t_psp_mean_ms, cfg.psp.t_psp_cv)
         self._mu_leg = lognorm(cfg.bank.leg_mean_ms, cfg.bank.leg_cv)
         self._mu_status = lognorm(cfg.switch.status_mean_ms, cfg.switch.status_cv)
@@ -273,6 +276,7 @@ class Engine:
         if spec.get("idempotency"):
             p.ik = ids.idempotency_key(p.n)
         self.payments.append(p)
+        self._pay_by_id[p.pid] = p
         if i + 1 < tp.n:
             self._push(int(tp.arrivals[i + 1]), ARRIVAL, i + 1)
         self._ev("PAYMENT_INITIATED", kind=p.kind, **self._pay_fields(p))
@@ -481,9 +485,10 @@ class Engine:
         a.state = ENDED
         g = self.psps[a.psp]
         sec = (self.now // 1000) % 10
-        self._out_psp[a.psp, sec] += 1
-        if status == "SUCCESS":
-            self._succ_psp[a.psp, sec] += 1
+        if a.waiting:
+            self._out_psp[a.psp, sec] += 1
+            if status in ("SUCCESS", "DECLINED"):
+                self._succ_psp[a.psp, sec] += 1
         self._release(g)
         p = a.pay
         self._truth_changed(p)
@@ -523,6 +528,8 @@ class Engine:
             return
         a.waiting = False
         a.timed_out = True
+        sec = (self.now // 1000) % 10
+        self._out_psp[a.psp, sec] += 1
         self._ev("ATTEMPT_OUTCOME", kind=p.kind, **self._att_fields(a), status="CLIENT_TIMEOUT",
                  error_code="E_CLIENT_TIMEOUT", response_time_ms=self.cfg.client.timeout_ms,
                  client_timeout_ms=self.cfg.client.timeout_ms)
@@ -733,11 +740,28 @@ class Engine:
         gap = sched[min(p.checks, len(sched) - 1)]
         self._push(self.now + gap, CHECK_DUE, p)
 
-    # ------------------------------------------------------------------ ledger model (U4, LEDGER_MODE=model)
+    # ------------------------------------------------------------------ ledger model & bridge (U4)
     def _ledger_latency(self, p: Payment, j: int) -> int:
         z = self.tape.z_ledger[p.i, j % self.tape.z_ledger.shape[1]]
         submit = math.exp(self._mu_ledger[0] + self._mu_ledger[1] * z)
         return max(1, round(submit + self.cfg.ledger_model.event_lag_p50_ms))
+
+    def _leg_flags(self, p: Payment) -> tuple[bool, bool, bool, bool, bool]:
+        debited = any(a.debited for a in p.attempts)
+        credited = any(a.credited for a in p.attempts)
+        failed_rem = any(a.failed and not a.debited for a in p.attempts)
+        failed_ben = any(a.failed and a.debited for a in p.attempts)
+        reversed_leg = any(a.reversed for a in p.attempts)
+        return debited, credited, failed_rem, failed_ben, reversed_leg
+
+    def poll_ledger_bridge(self) -> None:
+        if not self.ledger_bridge:
+            return
+        for pid, state in self.ledger_bridge.drain_resolutions():
+            p = self._pay_by_id.get(pid)
+            if p is not None and p.ledger_open and not p.ledger_resolving:
+                p.ledger_resolving = True
+                self._push(self.now, LEDGER_RESOLVE, (p, state))
 
     def _h_ledger_open(self, p: Payment) -> None:
         if p.ledger_open:
@@ -745,20 +769,39 @@ class Engine:
         p.ledger_open = True
         self.stats["ledger_opened"] += 1
         self._ev("LEDGER_OPENED", ledger_state="UNKNOWN", **self._pay_fields(p))
+        if self.ledger_bridge and self.ledger_bridge.active_http:
+            deb, cred, frem, fben, rev = self._leg_flags(p)
+            ok = self.ledger_bridge.open_unknown(
+                p.pid, p.ik, self.psp_names[p.home], self.bank_names[p.rem], self.bank_names[p.ben],
+                self.now, debited=deb, credited=cred, failed_rem=frem, failed_ben=fben, reversed_leg=rev,
+            )
+            if ok:
+                self.poll_ledger_bridge()
+                return
         self._truth_changed(p)
 
     def _truth_changed(self, p: Payment) -> None:
         """Banks attest legs of unknown payments; schedule the pushed resolution once the truth is terminal."""
-        if not p.ledger_open or p.ledger_resolving or p.closed:
+        if not p.ledger_open or p.ledger_resolving:
             return
+        if self.ledger_bridge and self.ledger_bridge.active_http:
+            deb, cred, frem, fben, rev = self._leg_flags(p)
+            ok = self.ledger_bridge.attest_state(p.pid, self.now, deb, cred, frem, fben, rev)
+            if ok:
+                self.poll_ledger_bridge()
+                return
         if p.truth() == "IN_FLIGHT":
             return
         p.ledger_resolving = True
         self._push(self.now + self._ledger_latency(p, 1), LEDGER_RESOLVE, p)
 
-    def _h_ledger_resolve(self, p: Payment) -> None:
-        tr = p.truth()
-        state = "SUCCESS" if tr == "SUCCESS" else ("REVERSED" if any(a.reversed for a in p.attempts) else "FAILED_NO_DEBIT")
+    def _h_ledger_resolve(self, obj) -> None:
+        if isinstance(obj, tuple):
+            p, state = obj
+        else:
+            p = obj
+            tr = p.truth()
+            state = "SUCCESS" if tr == "SUCCESS" else ("REVERSED" if any(a.reversed for a in p.attempts) else "FAILED_NO_DEBIT")
         self.stats["ledger_resolved"] += 1
         self._ev("LEDGER_RESOLVED", ledger_state=state, **self._pay_fields(p))
         if p.closed or not p.pending:

@@ -204,3 +204,74 @@ def test_d10_s3_recorded_run_d3_before_d0_and_right_bank():
     assert not d0 or min(a["first_alert_sim_ms"] for a in d3) < min(a["first_alert_sim_ms"] for a in d0)
     incs = [i for s in snaps for i in s["incidents"]]
     assert incs[0]["segment_id"] == f"bank:*:{truth['bank']}" and incs[0]["verdict"] == "BANK_SIDE"
+
+
+def test_m3_t01_split_integrity_and_forecaster_evaluation():
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    import train_forecaster as tf
+    fake_runs = [
+        {"run_id": "r-S4-1-U0", "samples": [(0.2, 0.3, 0.0)], "stuck": 0.0},
+        {"run_id": "r-S4-2-U0", "samples": [(1.5, 2.2, 1.0)], "stuck": 1.0},
+        {"run_id": "r-S4-1001-U0", "samples": [(0.3, 0.4, 0.0)], "stuck": 0.0},
+        {"run_id": "r-S4-1002-U0", "samples": [(1.6, 2.4, 1.0)], "stuck": 1.0},
+        {"run_id": "r-S4-2001-U0", "samples": [(0.4, 0.5, 0.0)], "stuck": 0.0},
+    ]
+    splits = tf.split_runs(fake_runs)
+    ids_a = {r["run_id"] for r in splits["A"]}
+    ids_b = {r["run_id"] for r in splits["B"]}
+    ids_c = {r["run_id"] for r in splits["C"]}
+    assert ids_a == {"r-S4-1-U0", "r-S4-2-U0"}
+    assert ids_b == {"r-S4-1001-U0", "r-S4-1002-U0"}
+    assert ids_c == {"r-S4-2001-U0"}
+    assert not (ids_a & ids_b) and not (ids_b & ids_c) and not (ids_a & ids_c)
+
+
+def test_m3_t02_single_bank_fault_at_demo_rate_opens_one_incident():
+    fault = _faulty(150_000, 220_000, lambda p, r, b: "CLIENT_TIMEOUT" if b == "B1" else None)
+    ev = Stream().traffic(0, 230_000, 25, fault).sorted()
+    pipe = Pipeline(RUN, "U0", CFG, grid=None)
+    snaps = drive(pipe, ev, 230_000)
+    live_ids = {inc["incident_id"] for s in snaps for inc in s["incidents"]}
+    assert len(live_ids) == 1
+    assert list(pipe.lifecycle.incidents.values())[0].segment_id == "bank:*:B1"
+
+
+def test_m3_t06_watermark_late_events_and_dedupe():
+    s = Stream()
+    s.attempt(10_000, "P1", "B1", "B2", rt=100)
+    s.attempt(15_000, "P1", "B1", "B2", rt=100)
+    ev_list = s.sorted()
+    dup = dict(ev_list[0])
+    # Late event: arrives after sim_ms=15_000 with timestamp 11_000 (watermark is 2_000 ms, so 15_000 - 11_000 = 4_000 > 2_000)
+    s2 = Stream()
+    s2.attempt(11_000, "P1", "B1", "B2", rt=100)
+    late_ev = s2.sorted()[0]
+    late_ev["event_id"] = f"{RUN}-00999999"
+
+    pipe = Pipeline(RUN, "U0", CFG, validate=False, grid=None)
+    pipe.ingest([ev_list[0], dup, ev_list[-1]])
+    assert pipe.ingestor.metrics["duplicates"] == 1
+    pipe.ingest([late_ev])
+    assert pipe.ingestor.metrics["late"] == 1
+
+
+def test_m3_t06_model_degraded_after_two_slow_ticks(monkeypatch):
+    s = Stream().traffic(0, 20_000, 30).sorted()
+    pipe = Pipeline(RUN, "U0", CFG, validate=False, grid=None)
+    pipe.ingest([e for e in s if e["sim_ms"] < 15_000])
+    orig_update = pipe.forecast.update
+
+    def slow_update(ft, timeout_ms):
+        time.sleep(0.055)
+        return orig_update(ft, timeout_ms)
+
+    monkeypatch.setattr(pipe.forecast, "update", slow_update)
+    snap1 = pipe.tick(5_000)
+    assert snap1["global_state"] != "DEGRADED_MONITORING"
+    snap2 = pipe.tick(10_000)
+    assert pipe.model_degraded is True
+    assert snap2["global_state"] == "DEGRADED_MONITORING"
+    p1_seg = next(seg for seg in snap2["segments"] if seg["segment_id"] == "psp:P1:*")
+    assert "model_degraded" in p1_seg["flags"]
+

@@ -1,0 +1,43 @@
+{
+ "run_id": "r-S4-2001-U0",
+ "scenario": "S4",
+ "seed": 2001,
+ "universe": "U0",
+ "config_sha256": "7be4f7c54aad61e4c90ca996bbde546796c2f1c834249d2f740a0695568b147a",
+ "sim_version": "dev",
+ "metrics": {
+  "peak_queue": 422.0,
+  "excess_retries": 1313.0,
+  "recovery_time_s": null,
+  "unique_success": 42190.0,
+  "duplicate_commits": 125.0,
+  "peak_switch_checks_per_s": 158.0,
+  "switch_checks_total": 2354.0,
+  "switch_checks_per_unknown": 1.5693333333333332,
+  "unknowns_total": 1500.0,
+  "median_resolve_s": 2.088,
+  "p95_resolve_s": 6.24005,
+  "escalated": 0.0,
+  "harmful_failovers": 0.0,
+  "tat_breaches": 0.0,
+  "goodput_min_frac": 0.8248175182481752
+ },
+ "ground_truth": [
+  {
+   "incident_id": "gt-1",
+   "onset_ms": 120000,
+   "end_ms": 140000,
+   "level": "psp",
+   "psp": "P1",
+   "bank": "*",
+   "kind": "retry_storm",
+   "magnitude": 0.65,
+   "is_incident": true
+  }
+ ],
+ "files": {
+  "events": "events.jsonl",
+  "ground_truth": "ground_truth.json",
+  "timeseries": "timeseries.json"
+ }
+}

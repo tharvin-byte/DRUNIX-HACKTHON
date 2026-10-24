@@ -4,6 +4,8 @@ import crypto from "node:crypto";
 import Fastify from "fastify";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { config } from "./config.ts";
+import { LiveLedger } from "./live/ledger.ts";
+import type { FabricTransport } from "./live/ledger.ts";
 import { MockLedger } from "./mock/ledger.ts";
 import { QsError } from "./mock/transitions.ts";
 import type { Kind } from "./mock/transitions.ts";
@@ -25,17 +27,29 @@ function pct(xs: number[], q: number): number {
   return s[Math.min(s.length - 1, Math.floor(q * s.length))];
 }
 
-export interface AppOptions { apiKey?: string; latencyScale?: number; mode?: "mock" | "live" }
+export interface AppOptions {
+  apiKey?: string;
+  latencyScale?: number;
+  mode?: "mock" | "live";
+  transport?: FabricTransport;
+  checkpointPath?: string;
+  jitterMinMs?: number;
+  jitterMaxMs?: number;
+}
 
-export function buildApp(opts: AppOptions = {}): { app: FastifyInstance; ledger: MockLedger; hub: SseHub } {
+export function buildApp(opts: AppOptions = {}): { app: FastifyInstance; ledger: MockLedger | LiveLedger; hub: SseHub } {
   const mode = opts.mode ?? config.mode;
-  if (mode === "live") {
-    // TODO(M1, Day 2-3): live Fabric/Drunix implementation (src/live/). Until then refuse to fake a ledger.
-    throw new Error("LEDGER_MODE=live is not implemented yet (see m1_ledger/STATUS.md); use LEDGER_MODE=mock");
-  }
   const apiKey = opts.apiKey ?? config.apiKey;
   const hub = new SseHub();
-  const ledger = new MockLedger(hub, { latencyScale: opts.latencyScale });
+  const ledger: MockLedger | LiveLedger =
+    mode === "live"
+      ? new LiveLedger(hub, {
+          transport: opts.transport,
+          checkpointPath: opts.checkpointPath,
+          jitterMinMs: opts.jitterMinMs,
+          jitterMaxMs: opts.jitterMaxMs,
+        })
+      : new MockLedger(hub, { latencyScale: opts.latencyScale });
   const app = Fastify({ logger: false, bodyLimit: 1_000_000 });
 
   const writeGuard = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -62,7 +76,8 @@ export function buildApp(opts: AppOptions = {}): { app: FastifyInstance; ledger:
   };
 
   app.get("/v1/health", async () => ({ status: "ok", module: "m1", mode, version: process.env.GIT_SHA ?? "dev",
-    peers_reachable: {}, rejected_messages_total: metrics.rejectedMessagesTotal }));
+    peers_reachable: ledger instanceof LiveLedger ? ledger.peersReachable() : {},
+    rejected_messages_total: metrics.rejectedMessagesTotal }));
 
   app.get("/v1/network", async () => {
     const lat = ledger.latencies;
@@ -145,14 +160,19 @@ export function buildApp(opts: AppOptions = {}): { app: FastifyInstance; ledger:
 
   app.get("/v1/metrics", async () => {
     const lat = ledger.latencies;
+    const evalLat = ledger instanceof LiveLedger ? ledger.evaluateLatencies : [];
+    const mvcc = ledger instanceof LiveLedger ? ledger.mvccRetries : 0;
     return { submit_ms: { p50: pct(lat, 0.5), p95: pct(lat, 0.95), p99: pct(lat, 0.99), n: lat.length },
-      evaluate_ms: { p50: 0, p95: 0, p99: 0, n: 0 }, mvcc_retries: 0, errors_by_code: ledger.errorsByCode,
+      evaluate_ms: { p50: pct(evalLat, 0.5), p95: pct(evalLat, 0.95), p99: pct(evalLat, 0.99), n: evalLat.length },
+      mvcc_retries: mvcc, errors_by_code: ledger.errorsByCode,
       rejected_messages_total: metrics.rejectedMessagesTotal };
   });
 
-  app.post("/v1/admin/reset", { preHandler: writeGuard }, async () => {
-    ledger.reset();
-    return { status: "reset" };
+  app.post("/v1/admin/reset", { preHandler: writeGuard }, async (_req, reply) => {
+    return run(reply, () => {
+      ledger.reset();
+      return { status: "reset" };
+    });
   });
 
   return { app, ledger, hub };

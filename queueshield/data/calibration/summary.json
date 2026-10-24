@@ -1,0 +1,188 @@
+{
+  "S4": {
+    "scenario": "S4",
+    "label": "simulation",
+    "seeds": 3,
+    "size_key": "worker_loss",
+    "sizes": [
+      0.5,
+      0.6,
+      0.65
+    ],
+    "durations_s": [
+      20,
+      45,
+      80
+    ],
+    "accepted_boundary": true,
+    "short_recovers_ge_80pct": true,
+    "long_sticks_ge_80pct_and_u2_lower": true,
+    "cells": [
+      {
+        "worker_loss": 0.5,
+        "duration_s": 20,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.996,
+        "u2_mean_goodput_frac": 0.996
+      },
+      {
+        "worker_loss": 0.5,
+        "duration_s": 45,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.997,
+        "u2_mean_goodput_frac": 0.997
+      },
+      {
+        "worker_loss": 0.5,
+        "duration_s": 80,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.991,
+        "u2_mean_goodput_frac": 0.991
+      },
+      {
+        "worker_loss": 0.6,
+        "duration_s": 20,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.996,
+        "u2_mean_goodput_frac": 0.996
+      },
+      {
+        "worker_loss": 0.6,
+        "duration_s": 45,
+        "u0_stuck_frac": 0.333,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.664,
+        "u2_mean_goodput_frac": 0.997
+      },
+      {
+        "worker_loss": 0.6,
+        "duration_s": 80,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.991
+      },
+      {
+        "worker_loss": 0.65,
+        "duration_s": 20,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.996,
+        "u2_mean_goodput_frac": 0.996
+      },
+      {
+        "worker_loss": 0.65,
+        "duration_s": 45,
+        "u0_stuck_frac": 0.667,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.334,
+        "u2_mean_goodput_frac": 0.997
+      },
+      {
+        "worker_loss": 0.65,
+        "duration_s": 80,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.991
+      }
+    ]
+  },
+  "S6": {
+    "scenario": "S6",
+    "label": "simulation",
+    "seeds": 3,
+    "size_key": "hold_frac",
+    "sizes": [
+      0.3,
+      0.35,
+      0.45
+    ],
+    "durations_s": [
+      20,
+      45,
+      75
+    ],
+    "accepted_boundary": true,
+    "short_recovers_ge_80pct": true,
+    "long_sticks_ge_80pct_and_u2_lower": true,
+    "cells": [
+      {
+        "hold_frac": 0.3,
+        "duration_s": 20,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.996,
+        "u2_mean_goodput_frac": 0.996
+      },
+      {
+        "hold_frac": 0.3,
+        "duration_s": 45,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.997
+      },
+      {
+        "hold_frac": 0.3,
+        "duration_s": 75,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.99
+      },
+      {
+        "hold_frac": 0.35,
+        "duration_s": 20,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.996,
+        "u2_mean_goodput_frac": 0.996
+      },
+      {
+        "hold_frac": 0.35,
+        "duration_s": 45,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.997
+      },
+      {
+        "hold_frac": 0.35,
+        "duration_s": 75,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.99
+      },
+      {
+        "hold_frac": 0.45,
+        "duration_s": 20,
+        "u0_stuck_frac": 0.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.996,
+        "u2_mean_goodput_frac": 0.996
+      },
+      {
+        "hold_frac": 0.45,
+        "duration_s": 45,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.997
+      },
+      {
+        "hold_frac": 0.45,
+        "duration_s": 75,
+        "u0_stuck_frac": 1.0,
+        "u2_stuck_frac": 0.0,
+        "u0_mean_goodput_frac": 0.0,
+        "u2_mean_goodput_frac": 0.99
+      }
+    ]
+  }
+}

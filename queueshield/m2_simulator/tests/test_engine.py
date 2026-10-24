@@ -172,18 +172,18 @@ def test_m2_t04_pace_payouts_token_bucket_on_s8():
 
 
 def test_m2_t06_u1_textbook_failover_moves_and_restores_weight():
-    pins = {"psp": "P1", "onset": 15_000, "duration": 25_000, "worker_loss": 0.85}
-    e = make("S4", 2, "U1", horizon=90_000, overrides=pins)
+    pins = {"psp": "P3", "onset": 10_000, "duration": 20_000, "worker_loss": 0.75}
+    e = make("S4", 2, "U1", horizon=75_000, overrides=pins)
     moved_seen = False
     restored_seen = False
-    for t in range(5_000, 90_000, 5_000):
+    for t in range(5_000, 75_000, 5_000):
         e.run_until(t)
-        if e.psps[0].weight == 0.0:
+        if e.psps[2].weight == 0.0:
             moved_seen = True
-        elif moved_seen and e.psps[0].weight == 1.0:
+        elif moved_seen and e.psps[2].weight == 1.0:
             restored_seen = True
-    assert moved_seen, "U1 textbook failover should move P1 weight to 0.0 during outage"
-    assert restored_seen, "U1 textbook failover should restore P1 weight to 1.0 after recovery"
+    assert moved_seen, "U1 textbook failover should move P3 weight to 0.0 during outage"
+    assert restored_seen, "U1 textbook failover should restore P3 weight to 1.0 after recovery"
 
 
 def test_m2_t06_actions_change_engine_behaviour():

@@ -1,0 +1,2160 @@
+{
+  "split": "B",
+  "seed_range": [
+    1000,
+    1998
+  ],
+  "count": 90,
+  "configs": [
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1000,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1001,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1002,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1003,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1004,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1005,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1006,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1007,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1008,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S0",
+      "seed": 1009,
+      "params": {},
+      "truth": []
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1050,
+      "params": {
+        "onset": 225478,
+        "duration": 177849,
+        "mult": 1.7485256885877491,
+        "flash": 1.7485256885877491
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 225478,
+          "end_ms": 403327,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.7485256885877491,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1051,
+      "params": {
+        "onset": 214829,
+        "duration": 149150,
+        "mult": 1.5079227438926168,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 214829,
+          "end_ms": 363979,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.5079227438926168,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1052,
+      "params": {
+        "onset": 217188,
+        "duration": 168400,
+        "mult": 1.7070342039722157,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 217188,
+          "end_ms": 385588,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.7070342039722157,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1053,
+      "params": {
+        "onset": 181703,
+        "duration": 144970,
+        "mult": 1.71669571169388,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 181703,
+          "end_ms": 326673,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.71669571169388,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1054,
+      "params": {
+        "onset": 199223,
+        "duration": 124347,
+        "mult": 1.450774165683017,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 199223,
+          "end_ms": 323570,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.450774165683017,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1055,
+      "params": {
+        "onset": 193577,
+        "duration": 157104,
+        "mult": 1.6597138102111773,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 193577,
+          "end_ms": 350681,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.6597138102111773,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1056,
+      "params": {
+        "onset": 230606,
+        "duration": 175974,
+        "mult": 1.4870405355539091,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 230606,
+          "end_ms": 406580,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.4870405355539091,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1057,
+      "params": {
+        "onset": 237919,
+        "duration": 128572,
+        "mult": 1.5625501733533436,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 237919,
+          "end_ms": 366491,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.5625501733533436,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1058,
+      "params": {
+        "onset": 180932,
+        "duration": 197974,
+        "mult": 1.4009818184110636,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 180932,
+          "end_ms": 378906,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.4009818184110636,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S1",
+      "seed": 1059,
+      "params": {
+        "onset": 212910,
+        "duration": 141760,
+        "mult": 1.7111693062984257,
+        "flash": 1.727272727272727
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 212910,
+          "end_ms": 354670,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.7111693062984257,
+          "is_incident": false
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1100,
+      "params": {
+        "psp": "P3",
+        "onset2": 239265,
+        "duration2": 100240,
+        "mult2": 2.4292291331384517
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 239265,
+          "end_ms": 339505,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.4292291331384517,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1101,
+      "params": {
+        "psp": "P2",
+        "onset2": 221685,
+        "duration2": 144674,
+        "mult2": 2.116935343929191
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 221685,
+          "end_ms": 366359,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.116935343929191,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1102,
+      "params": {
+        "psp": "P2",
+        "onset2": 193606,
+        "duration2": 135424,
+        "mult2": 1.8912003150966044
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 193606,
+          "end_ms": 329030,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.8912003150966044,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1103,
+      "params": {
+        "psp": "P3",
+        "onset2": 213511,
+        "duration2": 125721,
+        "mult2": 2.4336260753352317
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 213511,
+          "end_ms": 339232,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.4336260753352317,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1104,
+      "params": {
+        "psp": "P1",
+        "onset2": 202842,
+        "duration2": 140218,
+        "mult2": 1.6820086488384696
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 202842,
+          "end_ms": 343060,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.6820086488384696,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1105,
+      "params": {
+        "psp": "P1",
+        "onset2": 249432,
+        "duration2": 122401,
+        "mult2": 1.805898311066614
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 249432,
+          "end_ms": 371833,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.805898311066614,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1106,
+      "params": {
+        "psp": "P1",
+        "onset2": 225947,
+        "duration2": 122422,
+        "mult2": 1.693056593494504
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 225947,
+          "end_ms": 348369,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.693056593494504,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1107,
+      "params": {
+        "psp": "P2",
+        "onset2": 233140,
+        "duration2": 100691,
+        "mult2": 2.7394636804388073
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 233140,
+          "end_ms": 333831,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.7394636804388073,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1108,
+      "params": {
+        "psp": "P2",
+        "onset2": 226365,
+        "duration2": 126055,
+        "mult2": 2.0482037201819048
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 226365,
+          "end_ms": 352420,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.0482037201819048,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S2",
+      "seed": 1109,
+      "params": {
+        "psp": "P2",
+        "onset2": 198452,
+        "duration2": 126859,
+        "mult2": 1.6476185058193038
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 198452,
+          "end_ms": 325311,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.6476185058193038,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1150,
+      "params": {
+        "bank": "B2",
+        "onset": 252443,
+        "duration": 137360,
+        "mult": 6.4269166342533115
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 252443,
+          "end_ms": 389803,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B2",
+          "kind": "bank_slowdown",
+          "magnitude": 6.4269166342533115,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1151,
+      "params": {
+        "bank": "B1",
+        "onset": 251484,
+        "duration": 125111,
+        "mult": 4.243515133305392
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 251484,
+          "end_ms": 376595,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B1",
+          "kind": "bank_slowdown",
+          "magnitude": 4.243515133305392,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1152,
+      "params": {
+        "bank": "B4",
+        "onset": 222877,
+        "duration": 116276,
+        "mult": 5.562322351617739
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 222877,
+          "end_ms": 339153,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "bank_slowdown",
+          "magnitude": 5.562322351617739,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1153,
+      "params": {
+        "bank": "B5",
+        "onset": 252954,
+        "duration": 106488,
+        "mult": 7.603480631152125
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 252954,
+          "end_ms": 359442,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B5",
+          "kind": "bank_slowdown",
+          "magnitude": 7.603480631152125,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1154,
+      "params": {
+        "bank": "B3",
+        "onset": 233612,
+        "duration": 129965,
+        "mult": 7.1081150218207005
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 233612,
+          "end_ms": 363577,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B3",
+          "kind": "bank_slowdown",
+          "magnitude": 7.1081150218207005,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1155,
+      "params": {
+        "bank": "B1",
+        "onset": 223303,
+        "duration": 136535,
+        "mult": 5.956116654458594
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 223303,
+          "end_ms": 359838,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B1",
+          "kind": "bank_slowdown",
+          "magnitude": 5.956116654458594,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1156,
+      "params": {
+        "bank": "B5",
+        "onset": 252813,
+        "duration": 135490,
+        "mult": 5.1051229069757875
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 252813,
+          "end_ms": 388303,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B5",
+          "kind": "bank_slowdown",
+          "magnitude": 5.1051229069757875,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1157,
+      "params": {
+        "bank": "B3",
+        "onset": 198545,
+        "duration": 137606,
+        "mult": 6.084823464851313
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 198545,
+          "end_ms": 336151,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B3",
+          "kind": "bank_slowdown",
+          "magnitude": 6.084823464851313,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1158,
+      "params": {
+        "bank": "B2",
+        "onset": 241485,
+        "duration": 104089,
+        "mult": 4.791352769578399
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 241485,
+          "end_ms": 345574,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B2",
+          "kind": "bank_slowdown",
+          "magnitude": 4.791352769578399,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S3",
+      "seed": 1159,
+      "params": {
+        "bank": "B4",
+        "onset": 257549,
+        "duration": 109252,
+        "mult": 7.297800861146595
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 257549,
+          "end_ms": 366801,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "bank_slowdown",
+          "magnitude": 7.297800861146595,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1200,
+      "params": {
+        "psp": "P3",
+        "onset": 255759,
+        "duration": 50756,
+        "worker_loss": 0.6150057714360376
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 255759,
+          "end_ms": 306515,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.6150057714360376,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1201,
+      "params": {
+        "psp": "P2",
+        "onset": 197748,
+        "duration": 42376,
+        "worker_loss": 0.59535976770507
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 197748,
+          "end_ms": 240124,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.59535976770507,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1202,
+      "params": {
+        "psp": "P1",
+        "onset": 190173,
+        "duration": 62608,
+        "worker_loss": 0.5816278934382915
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 190173,
+          "end_ms": 252781,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.5816278934382915,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1203,
+      "params": {
+        "psp": "P3",
+        "onset": 189520,
+        "duration": 47774,
+        "worker_loss": 0.6851483239713518
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 189520,
+          "end_ms": 237294,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.6851483239713518,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1204,
+      "params": {
+        "psp": "P3",
+        "onset": 207928,
+        "duration": 74700,
+        "worker_loss": 0.5837264091818789
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 207928,
+          "end_ms": 282628,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.5837264091818789,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1205,
+      "params": {
+        "psp": "P1",
+        "onset": 243497,
+        "duration": 55537,
+        "worker_loss": 0.6703664445759053
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 243497,
+          "end_ms": 299034,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.6703664445759053,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1206,
+      "params": {
+        "psp": "P1",
+        "onset": 185966,
+        "duration": 76618,
+        "worker_loss": 0.6560378112868724
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 185966,
+          "end_ms": 262584,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.6560378112868724,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1207,
+      "params": {
+        "psp": "P2",
+        "onset": 208968,
+        "duration": 87138,
+        "worker_loss": 0.5057479810247161
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 208968,
+          "end_ms": 296106,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.5057479810247161,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1208,
+      "params": {
+        "psp": "P1",
+        "onset": 203277,
+        "duration": 84519,
+        "worker_loss": 0.5837809512903276
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 203277,
+          "end_ms": 287796,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.5837809512903276,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S4",
+      "seed": 1209,
+      "params": {
+        "psp": "P3",
+        "onset": 194840,
+        "duration": 51144,
+        "worker_loss": 0.5272868464929842
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 194840,
+          "end_ms": 245984,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "retry_storm",
+          "magnitude": 0.5272868464929842,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1250,
+      "params": {
+        "onset": 254908,
+        "duration": 187293,
+        "mult": 1.7809652556893865,
+        "flash": 1.7809652556893865,
+        "psp": "P1",
+        "onset2": 242632,
+        "duration2": 138829,
+        "mult2": 1.8725125269842533
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 254908,
+          "end_ms": 442201,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.7809652556893865,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 242632,
+          "end_ms": 381461,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.8725125269842533,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1251,
+      "params": {
+        "onset": 209593,
+        "duration": 174443,
+        "mult": 1.4178681191580937,
+        "flash": 1.727272727272727,
+        "psp": "P3",
+        "onset2": 259668,
+        "duration2": 131033,
+        "mult2": 1.6471105890802547
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 209593,
+          "end_ms": 384036,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.4178681191580937,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 259668,
+          "end_ms": 390701,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.6471105890802547,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1252,
+      "params": {
+        "onset": 207618,
+        "duration": 123276,
+        "mult": 1.5401962031922016,
+        "flash": 1.727272727272727,
+        "psp": "P1",
+        "onset2": 181041,
+        "duration2": 147943,
+        "mult2": 2.646999170616916
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 207618,
+          "end_ms": 330894,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.5401962031922016,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 181041,
+          "end_ms": 328984,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.646999170616916,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1253,
+      "params": {
+        "onset": 230808,
+        "duration": 135951,
+        "mult": 1.4813483629558344,
+        "flash": 1.727272727272727,
+        "psp": "P3",
+        "onset2": 241928,
+        "duration2": 143316,
+        "mult2": 1.977014632070715
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 230808,
+          "end_ms": 366759,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.4813483629558344,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 241928,
+          "end_ms": 385244,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.977014632070715,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1254,
+      "params": {
+        "onset": 224212,
+        "duration": 137229,
+        "mult": 1.5603526851369767,
+        "flash": 1.727272727272727,
+        "psp": "P1",
+        "onset2": 200300,
+        "duration2": 144238,
+        "mult2": 2.807228687424889
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 224212,
+          "end_ms": 361441,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.5603526851369767,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 200300,
+          "end_ms": 344538,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.807228687424889,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1255,
+      "params": {
+        "onset": 231556,
+        "duration": 140486,
+        "mult": 1.4433847316970336,
+        "flash": 1.727272727272727,
+        "psp": "P3",
+        "onset2": 247727,
+        "duration2": 106952,
+        "mult2": 1.7438205227285857
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 231556,
+          "end_ms": 372042,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.4433847316970336,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 247727,
+          "end_ms": 354679,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.7438205227285857,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1256,
+      "params": {
+        "onset": 257420,
+        "duration": 185866,
+        "mult": 1.7591766222238372,
+        "flash": 1.7591766222238372,
+        "psp": "P3",
+        "onset2": 254927,
+        "duration2": 113918,
+        "mult2": 1.8759230391508268
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 257420,
+          "end_ms": 443286,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.7591766222238372,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 254927,
+          "end_ms": 368845,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.8759230391508268,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1257,
+      "params": {
+        "onset": 189365,
+        "duration": 154845,
+        "mult": 1.7820020223218973,
+        "flash": 1.7820020223218973,
+        "psp": "P2",
+        "onset2": 185470,
+        "duration2": 148733,
+        "mult2": 2.358911677299591
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 189365,
+          "end_ms": 344210,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.7820020223218973,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 185470,
+          "end_ms": 334203,
+          "level": "psp",
+          "psp": "P2",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.358911677299591,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1258,
+      "params": {
+        "onset": 255439,
+        "duration": 155629,
+        "mult": 1.5971842667802083,
+        "flash": 1.727272727272727,
+        "psp": "P1",
+        "onset2": 211910,
+        "duration2": 109908,
+        "mult2": 1.777904776754176
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 255439,
+          "end_ms": 411068,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.5971842667802083,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 211910,
+          "end_ms": 321818,
+          "level": "psp",
+          "psp": "P1",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 1.777904776754176,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S5",
+      "seed": 1259,
+      "params": {
+        "onset": 250777,
+        "duration": 128128,
+        "mult": 1.5730454294581186,
+        "flash": 1.727272727272727,
+        "psp": "P3",
+        "onset2": 213557,
+        "duration2": 118437,
+        "mult2": 2.5233959027267088
+      },
+      "truth": [
+        {
+          "incident_id": "gt-0",
+          "onset_ms": 250777,
+          "end_ms": 378905,
+          "level": "platform",
+          "psp": "*",
+          "bank": "*",
+          "kind": "surge",
+          "magnitude": 1.5730454294581186,
+          "is_incident": false
+        },
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 213557,
+          "end_ms": 331994,
+          "level": "psp",
+          "psp": "P3",
+          "bank": "*",
+          "kind": "psp_slowdown",
+          "magnitude": 2.5233959027267088,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1300,
+      "params": {
+        "bank": "B4",
+        "onset": 233487,
+        "duration": 58554,
+        "hold_frac": 0.38691815855378797,
+        "resolve_after": 91448,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 233487,
+          "end_ms": 292041,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "verification_storm",
+          "magnitude": 0.38691815855378797,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1301,
+      "params": {
+        "bank": "B1",
+        "onset": 194282,
+        "duration": 66795,
+        "hold_frac": 0.41271525665495423,
+        "resolve_after": 61571,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 194282,
+          "end_ms": 261077,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B1",
+          "kind": "verification_storm",
+          "magnitude": 0.41271525665495423,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1302,
+      "params": {
+        "bank": "B2",
+        "onset": 203161,
+        "duration": 60946,
+        "hold_frac": 0.3723844796101908,
+        "resolve_after": 62344,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 203161,
+          "end_ms": 264107,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B2",
+          "kind": "verification_storm",
+          "magnitude": 0.3723844796101908,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1303,
+      "params": {
+        "bank": "B5",
+        "onset": 218379,
+        "duration": 50455,
+        "hold_frac": 0.4182563648062151,
+        "resolve_after": 102848,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 218379,
+          "end_ms": 268834,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B5",
+          "kind": "verification_storm",
+          "magnitude": 0.4182563648062151,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1304,
+      "params": {
+        "bank": "B4",
+        "onset": 216777,
+        "duration": 64468,
+        "hold_frac": 0.41479664281549933,
+        "resolve_after": 91923,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 216777,
+          "end_ms": 281245,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "verification_storm",
+          "magnitude": 0.41479664281549933,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1305,
+      "params": {
+        "bank": "B5",
+        "onset": 240130,
+        "duration": 47964,
+        "hold_frac": 0.46060185193589054,
+        "resolve_after": 79623,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 240130,
+          "end_ms": 288094,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B5",
+          "kind": "verification_storm",
+          "magnitude": 0.46060185193589054,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1306,
+      "params": {
+        "bank": "B3",
+        "onset": 193571,
+        "duration": 70833,
+        "hold_frac": 0.3494647414536946,
+        "resolve_after": 72572,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 193571,
+          "end_ms": 264404,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B3",
+          "kind": "verification_storm",
+          "magnitude": 0.3494647414536946,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1307,
+      "params": {
+        "bank": "B5",
+        "onset": 194640,
+        "duration": 49403,
+        "hold_frac": 0.32440643379367406,
+        "resolve_after": 69117,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 194640,
+          "end_ms": 244043,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B5",
+          "kind": "verification_storm",
+          "magnitude": 0.32440643379367406,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1308,
+      "params": {
+        "bank": "B3",
+        "onset": 186064,
+        "duration": 65241,
+        "hold_frac": 0.403017038030269,
+        "resolve_after": 82784,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 186064,
+          "end_ms": 251305,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B3",
+          "kind": "verification_storm",
+          "magnitude": 0.403017038030269,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S6",
+      "seed": 1309,
+      "params": {
+        "bank": "B3",
+        "onset": 225998,
+        "duration": 68721,
+        "hold_frac": 0.4445607382745975,
+        "resolve_after": 92051,
+        "resolve_credit_prob": 0.7
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 225998,
+          "end_ms": 294719,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B3",
+          "kind": "verification_storm",
+          "magnitude": 0.4445607382745975,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1350,
+      "params": {
+        "psp": "P3",
+        "bank": "B4",
+        "start": 242896,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 272896,
+          "end_ms": 362896,
+          "level": "route",
+          "psp": "P3",
+          "bank": "B4",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1351,
+      "params": {
+        "psp": "P2",
+        "bank": "B4",
+        "start": 194430,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 224430,
+          "end_ms": 314430,
+          "level": "route",
+          "psp": "P2",
+          "bank": "B4",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1352,
+      "params": {
+        "psp": "P2",
+        "bank": "B1",
+        "start": 224756,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 254756,
+          "end_ms": 344756,
+          "level": "route",
+          "psp": "P2",
+          "bank": "B1",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1353,
+      "params": {
+        "psp": "P3",
+        "bank": "B1",
+        "start": 240047,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 270047,
+          "end_ms": 360047,
+          "level": "route",
+          "psp": "P3",
+          "bank": "B1",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1354,
+      "params": {
+        "psp": "P3",
+        "bank": "B1",
+        "start": 193330,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 223330,
+          "end_ms": 313330,
+          "level": "route",
+          "psp": "P3",
+          "bank": "B1",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1355,
+      "params": {
+        "psp": "P3",
+        "bank": "B4",
+        "start": 220168,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 250168,
+          "end_ms": 340168,
+          "level": "route",
+          "psp": "P3",
+          "bank": "B4",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1356,
+      "params": {
+        "psp": "P1",
+        "bank": "B2",
+        "start": 222258,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 252258,
+          "end_ms": 342258,
+          "level": "route",
+          "psp": "P1",
+          "bank": "B2",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1357,
+      "params": {
+        "psp": "P1",
+        "bank": "B4",
+        "start": 219798,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 249798,
+          "end_ms": 339798,
+          "level": "route",
+          "psp": "P1",
+          "bank": "B4",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1358,
+      "params": {
+        "psp": "P1",
+        "bank": "B5",
+        "start": 217950,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 247950,
+          "end_ms": 337950,
+          "level": "route",
+          "psp": "P1",
+          "bank": "B5",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S7",
+      "seed": 1359,
+      "params": {
+        "psp": "P3",
+        "bank": "B2",
+        "start": 227137,
+        "mult_end": 2.2
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 257137,
+          "end_ms": 347137,
+          "level": "route",
+          "psp": "P3",
+          "bank": "B2",
+          "kind": "silent_drift",
+          "magnitude": 2.2,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1400,
+      "params": {
+        "bank": "B1",
+        "onset": 195557,
+        "batch_n": 2821
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 195557,
+          "end_ms": 305557,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B1",
+          "kind": "payout_burst",
+          "magnitude": 2821.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1401,
+      "params": {
+        "bank": "B1",
+        "onset": 247042,
+        "batch_n": 3124
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 247042,
+          "end_ms": 357042,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B1",
+          "kind": "payout_burst",
+          "magnitude": 3124.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1402,
+      "params": {
+        "bank": "B4",
+        "onset": 212566,
+        "batch_n": 3556
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 212566,
+          "end_ms": 322566,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "payout_burst",
+          "magnitude": 3556.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1403,
+      "params": {
+        "bank": "B4",
+        "onset": 259759,
+        "batch_n": 3423
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 259759,
+          "end_ms": 369759,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "payout_burst",
+          "magnitude": 3423.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1404,
+      "params": {
+        "bank": "B3",
+        "onset": 221415,
+        "batch_n": 3611
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 221415,
+          "end_ms": 331415,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B3",
+          "kind": "payout_burst",
+          "magnitude": 3611.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1405,
+      "params": {
+        "bank": "B2",
+        "onset": 202293,
+        "batch_n": 2047
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 202293,
+          "end_ms": 312293,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B2",
+          "kind": "payout_burst",
+          "magnitude": 2047.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1406,
+      "params": {
+        "bank": "B1",
+        "onset": 249553,
+        "batch_n": 3663
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 249553,
+          "end_ms": 359553,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B1",
+          "kind": "payout_burst",
+          "magnitude": 3663.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1407,
+      "params": {
+        "bank": "B4",
+        "onset": 182750,
+        "batch_n": 3019
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 182750,
+          "end_ms": 292750,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B4",
+          "kind": "payout_burst",
+          "magnitude": 3019.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1408,
+      "params": {
+        "bank": "B5",
+        "onset": 252499,
+        "batch_n": 3283
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 252499,
+          "end_ms": 362499,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B5",
+          "kind": "payout_burst",
+          "magnitude": 3283.0,
+          "is_incident": true
+        }
+      ]
+    },
+    {
+      "split": "B",
+      "scenario": "S8",
+      "seed": 1409,
+      "params": {
+        "bank": "B2",
+        "onset": 239938,
+        "batch_n": 3679
+      },
+      "truth": [
+        {
+          "incident_id": "gt-1",
+          "onset_ms": 239938,
+          "end_ms": 349938,
+          "level": "bank",
+          "psp": "*",
+          "bank": "B2",
+          "kind": "payout_burst",
+          "magnitude": 3679.0,
+          "is_incident": true
+        }
+      ]
+    }
+  ]
+}

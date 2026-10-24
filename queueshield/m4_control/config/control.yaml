@@ -7,6 +7,7 @@ governor:
   r_max_frac: 0.3                  # r_max = 0.3 * C_status * share_p
   burst_mult: 2.0
   publish_change: 0.10             # publish CHECK_BUDGET when any value changes by > 10 %
+  min_publish_interval_s: 30       # M4-T02: minimum interval between normal budget publications
   first_check_delay_ms: 10000
   max_checks: 3
   horizon_ms: 120000

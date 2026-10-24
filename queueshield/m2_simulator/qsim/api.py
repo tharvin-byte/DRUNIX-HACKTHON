@@ -12,6 +12,7 @@ import os
 import re
 import secrets
 import subprocess
+import threading
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
@@ -19,7 +20,7 @@ from typing import Optional
 from fastapi import FastAPI, Header, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from qsim import contracts, jsonlog, ledger_bridge, metrics
+from qsim import batch, contracts, jsonlog, ledger_bridge, metrics
 from qsim.live import LiveRun
 from qsim.sse import SseHub
 
@@ -71,6 +72,8 @@ class State:
         self.ledger_mode = os.environ.get("LEDGER_MODE", "model")
         self.data_dir = Path(os.environ.get("DATA_DIR", Path(__file__).resolve().parents[2] / "data"))
         self.version = git_version()
+        self.arena_jobs: dict[str, dict] = {}
+        self.arena_seq = 0
 
 
 async def mock_replay(st: State) -> None:
@@ -113,7 +116,8 @@ def create_app() -> FastAPI:
 
     @app.get("/v1/health")
     def health():
-        degraded = st.mode == "live" and not ledger_bridge.mode_supported(st.ledger_mode)
+        bridge_degraded = bool(st.run and st.run.bridge and st.run.bridge.degraded)
+        degraded = (st.mode == "live" and not ledger_bridge.mode_supported(st.ledger_mode)) or bridge_degraded
         return {"status": "degraded" if degraded else "ok", "module": "m2",
                 "mode": "mock" if st.mode == "mock" else "live", "version": st.version}
 
@@ -132,7 +136,7 @@ def create_app() -> FastAPI:
             if st.run:
                 st.run.stop()
             st.run = LiveRun(st.hub, body["scenario"], body["seed"], body["universe"], body.get("speed", 1),
-                             body.get("overrides"), os.environ.get("CONTROL_URL"))
+                             body.get("overrides"), os.environ.get("CONTROL_URL"), ledger_mode=st.ledger_mode)
             st.run.start()
             return {"run_id": st.run.run_id}
         if st.run is None:
@@ -154,10 +158,11 @@ def create_app() -> FastAPI:
         r = st.run
         if r is None:
             return {"run_id": None, "scenario": None, "seed": None, "universe": None, "sim_ms": 0, "speed": 1,
-                    "achieved_speed": 0.0, "state": "IDLE", "ledger_mode": st.ledger_mode}
+                    "achieved_speed": 0.0, "state": "IDLE", "ledger_mode": st.ledger_mode, "ledger_backlog": 0}
         out = {"run_id": r.run_id, "scenario": r.scenario, "seed": r.seed, "universe": r.universe,
                "sim_ms": r.sim_ms, "speed": r.speed, "achieved_speed": r.achieved_speed, "state": r.state,
-               "ledger_mode": st.ledger_mode}
+               "ledger_mode": "model" if (r.bridge and r.bridge.degraded) else st.ledger_mode,
+               "ledger_backlog": r.bridge.backlog if r.bridge else 0}
         if r.error:
             out["error"] = r.error
         return out
@@ -214,15 +219,54 @@ def create_app() -> FastAPI:
             return err(404, "NOT_FOUND", run_id)
         return json.loads(f.read_text(encoding="utf-8"))
 
-    @app.post("/v1/arena")
-    async def arena(x_qs_key: Optional[str] = Header(default=None)):
+    @app.post("/v1/arena", status_code=202)
+    async def arena(request: Request, x_qs_key: Optional[str] = Header(default=None)):
         if not authorised(x_qs_key):
             return err(401, "UNAUTHORIZED", "missing or wrong X-QS-Key")
-        # TODO(M2, Day 4): background job over qsim.batch.run_one; until then run `python -m qsim.batch`.
-        return err(503, "UNAVAILABLE", "arena jobs not implemented yet; use python -m qsim.batch")
+        body = await body_json(request)
+        if not isinstance(body, dict) or "scenario" not in body:
+            return err(400, "BAD_REQUEST", "scenario required")
+        scen = str(body["scenario"])
+        seeds = [int(s) for s in body.get("seeds", [1])]
+        universes = [str(u) for u in body.get("universes", ["U0", "U2", "U4"])]
+        overrides = body.get("overrides")
+        horizon_ms = body.get("horizon_ms")
+        op_delay = body.get("operator_delay_s")
+
+        st.arena_seq += 1
+        job_id = f"arena-{st.arena_seq:04d}"
+        job = {"state": "RUNNING", "done": 0, "total": len(seeds) * len(universes), "run_ids": []}
+        st.arena_jobs[job_id] = job
+
+        def _worker():
+            try:
+                ls = None
+                if os.environ.get("DETECT_URL") and os.environ.get("CONTROL_URL"):
+                    ls = batch.Lockstep(os.environ["DETECT_URL"], os.environ["CONTROL_URL"], op_delay)
+                out_dir = st.data_dir / "runs"
+                for seed in seeds:
+                    u2_metrics = None
+                    ordered = sorted(universes, key=lambda u: (0 if u == "U2" else (1 if u == "U0" else 2), u))
+                    for u in ordered:
+                        res = batch.run_one(scen, seed, u, out_dir, ls, overrides=overrides,
+                                            horizon_ms=horizon_ms, paired_u2_metrics=u2_metrics)
+                        if u == "U2":
+                            u2_metrics = res["metrics"]
+                        job["run_ids"].append(res["run_id"])
+                        job["done"] += 1
+                job["state"] = "DONE"
+            except Exception as exc:
+                job["state"] = "FAILED"
+                job["error"] = f"{type(exc).__name__}: {exc}"
+
+        threading.Thread(target=_worker, name=f"arena-{job_id}", daemon=True).start()
+        return {"job_id": job_id}
 
     @app.get("/v1/arena/{job_id}")
     def arena_job(job_id: str):
-        return err(404, "NOT_FOUND", job_id)
+        job = st.arena_jobs.get(job_id)
+        if job is None:
+            return err(404, "NOT_FOUND", job_id)
+        return job
 
     return app

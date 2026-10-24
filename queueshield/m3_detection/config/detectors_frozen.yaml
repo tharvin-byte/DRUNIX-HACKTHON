@@ -1,0 +1,15 @@
+# Frozen detector thresholds after validation bisection (docs/M3_DETECTION.md §4.2, M3-T03).
+# Matched budget: <= 1 false alert group per simulated hour on S0 + S1 validation runs.
+d0:
+  theta0: 0.90
+  ticks: 2
+d1:
+  timeout_a: 0.05
+  success_b: 0.90
+  sensitivity: 1.0
+  ticks: 2
+d2:
+  k: 0.5
+  h: 5.0
+d3:
+  tau: 0.5

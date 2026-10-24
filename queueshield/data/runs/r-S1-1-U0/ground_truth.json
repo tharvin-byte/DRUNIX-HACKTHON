@@ -1,0 +1,13 @@
+[
+ {
+  "incident_id": "gt-0",
+  "onset_ms": 207647,
+  "end_ms": 350433,
+  "level": "platform",
+  "psp": "*",
+  "bank": "*",
+  "kind": "surge",
+  "magnitude": 1.4543545426893765,
+  "is_incident": false
+ }
+]

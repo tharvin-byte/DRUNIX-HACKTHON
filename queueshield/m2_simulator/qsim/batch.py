@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -36,6 +37,47 @@ def sim_version() -> str:
 
 def config_sha256(cfg) -> str:
     return hashlib.sha256(repr(cfg).encode()).hexdigest()
+
+
+def _synth_ledger_events(run_id: str, ev: list[dict], start_seq: int) -> list[dict]:
+    """Convert in-sim LEDGER_OPENED / LEDGER_RESOLVED payment events into contract-valid ledger_event objects for U4."""
+    out: list[dict] = []
+    seq = start_seq
+    now_iso = datetime.now(timezone.utc).isoformat()
+    for x in ev:
+        et = x.get("event_type")
+        if et not in ("LEDGER_OPENED", "LEDGER_RESOLVED"):
+            continue
+        seq += 1
+        tx_id = f"simtx-{seq:08d}"
+        state = x.get("ledger_state", "UNKNOWN")
+        prev_state = None if et == "LEDGER_OPENED" else "UNKNOWN"
+        kind = "OPEN" if et == "LEDGER_OPENED" else ("CREDIT" if state == "SUCCESS" else ("REVERSAL" if state == "REVERSED" else "FAILURE_REMITTER"))
+        payload = {
+            "txnRef": f"{run_id}:{x['payment_id']}",
+            "state": state,
+            "prevState": prev_state,
+            "kind": kind,
+            "runId": run_id,
+            "payerPsp": x["psp"],
+            "remitterBank": x["remitter_bank"],
+            "beneficiaryBank": x["beneficiary_bank"],
+            "simMs": int(x["sim_ms"]),
+            "debitImplied": state in ("SUCCESS", "REVERSED"),
+        }
+        le = {
+            "event_id": f"{tx_id}:PaymentUpdated",
+            "block_number": seq,
+            "tx_id": tx_id,
+            "chaincode": "queueshield",
+            "name": "PaymentUpdated",
+            "payload": payload,
+            "received_wall_iso": now_iso,
+            "mock": True,
+        }
+        if contracts.accept("ledger_event", le):
+            out.append(le)
+    return out
 
 
 class Lockstep:
@@ -68,7 +110,7 @@ class Lockstep:
 
 def run_one(scenario: str, seed: int, universe: str, out_dir: Optional[Path] = None,
             lockstep: Optional[Lockstep] = None, overrides: Optional[dict] = None,
-            horizon_ms: Optional[int] = None) -> dict:
+            horizon_ms: Optional[int] = None, paired_u2_metrics: Optional[dict] = None) -> dict:
     cfg = config_mod.load(overrides=(overrides or {}).get("config"))
     spec = scenarios.build(scenario, seed, cfg, (overrides or {}).get("scenario"))
     rid = ids.run_id(scenario, seed, universe)
@@ -80,6 +122,7 @@ def run_one(scenario: str, seed: int, universe: str, out_dir: Optional[Path] = N
         lockstep.reset(rid)
     tick = cfg.run.tick_ms
     pending_actions: list = []
+    ledger_seq = 0
     t = tick
     while t <= e.horizon:
         e.run_until(t)
@@ -89,16 +132,20 @@ def run_one(scenario: str, seed: int, universe: str, out_dir: Optional[Path] = N
         ev = e.drain_events()
         all_events.extend(ev)
         if use_qs:
-            # TODO(M2): U4 should forward the ledger-model events (PaymentUpdated etc.) as ledger_event records.
-            snap, resp = lockstep.tick(rid, universe, t, ev, [])
+            led_ev = _synth_ledger_events(rid, ev, ledger_seq) if universe == "U4" else []
+            ledger_seq += len(led_ev)
+            snap, resp = lockstep.tick(rid, universe, t, ev, led_ev)
             ticks.append(snap)
             pending_actions.extend(resp.get("actions", []))
+            for adv in resp.get("advisories", []):
+                e.apply_advisory(adv)
         t += tick
     e.run_to_completion()
     all_events.extend(e.drain_events())
     result = {"run_id": rid, "scenario": scenario, "seed": int(seed), "universe": universe,
               "config_sha256": config_sha256(cfg), "sim_version": sim_version(),
-              "metrics": metrics.run_metrics(e), "ground_truth": spec.truth, "files": {"events": "events.jsonl"}}
+              "metrics": metrics.run_metrics(e, paired_u2_metrics=paired_u2_metrics),
+              "ground_truth": spec.truth, "files": {"events": "events.jsonl"}}
     if out_dir is not None:
         d = Path(out_dir) / rid
         d.mkdir(parents=True, exist_ok=True)
@@ -126,13 +173,21 @@ def main(argv: Optional[list] = None) -> None:
     ap.add_argument("--universes", nargs="+", default=["U0", "U2", "U4"])
     ap.add_argument("--out", default=os.environ.get("DATA_DIR", "../data") + "/runs")
     ap.add_argument("--operator-delay-s", type=float, default=None)
+    ap.add_argument("--horizon-ms", type=int, default=None)
     a = ap.parse_args(argv)
     ls = None
     if os.environ.get("DETECT_URL") and os.environ.get("CONTROL_URL"):
         ls = Lockstep(os.environ["DETECT_URL"], os.environ["CONTROL_URL"], a.operator_delay_s)
     for seed in a.seeds:
-        for u in a.universes:
-            run_one(a.scenario, seed, u, Path(a.out), ls)
+        u2_metrics = None
+        # If U2 is in the list, run U2 before U1/U3/U4 so harmful_failovers can compare against U2
+        ordered = sorted(a.universes, key=lambda u: (0 if u == "U2" else (1 if u == "U0" else 2), u))
+        results_by_u = {}
+        for u in ordered:
+            res = run_one(a.scenario, seed, u, Path(a.out), ls, horizon_ms=a.horizon_ms, paired_u2_metrics=u2_metrics)
+            results_by_u[u] = res
+            if u == "U2":
+                u2_metrics = res["metrics"]
 
 
 if __name__ == "__main__":

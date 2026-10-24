@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import time
 from typing import Optional
 
 from qdet import segments as S
@@ -51,6 +52,8 @@ class Pipeline:
         self.last_tick_ms = 0
         self.incident_updates: list = []
         self.last_snapshot: Optional[dict] = None
+        self._slow_model_ticks = 0
+        self.model_degraded = False
 
     # ------------------------------------------------------------------ events
     def ingest(self, events) -> None:
@@ -81,7 +84,15 @@ class Pipeline:
         d1 = self.d1.update(ft)
         d2 = self.d2.update(ft)
         d3 = self.d3.update(ft)
+        t0_fc = time.perf_counter()
         fc = self.forecast.update(ft, self.client_timeout_ms)
+        fc_ms = (time.perf_counter() - t0_fc) * 1000.0
+        if fc_ms > c.d3.model_budget_ms:
+            self._slow_model_ticks += 1
+            if self._slow_model_ticks >= 2:
+                self.model_degraded = True
+        else:
+            self._slow_model_ticks = 0
         sw_util = ft.F[S.SWITCH, FI["switch_status_util"]]
         loc = self.localizer.localize(now_ms // 1000, sw_util)
 
@@ -104,7 +115,26 @@ class Pipeline:
         updates, self.incident_updates = list(self.incident_updates), []
         # a network-wide verdict folds every warning into one incident, so the operator gets one package
         anchor = NETWORK_ANCHOR.get(loc.verdict)
-        primary = loc.primary_segment_id if loc.primary_segment_id in severity else None
+        # M3-T02: when localizer says BANK_SIDE(b) or PSP_SIDE(p), route warnings route:*:b join the bank/psp incident
+        # even if the bank/psp segment has not warned yet, provided at least one overlapping segment is warning now.
+        primary = None
+        if loc.primary_segment_id is not None:
+            if loc.primary_segment_id in severity:
+                primary = loc.primary_segment_id
+            elif loc.verdict in ("BANK_SIDE", "PSP_SIDE") and any(related(s, loc.primary_segment_id) for s in severity):
+                primary = loc.primary_segment_id
+        # Also if two route warnings share the same bank (e.g. route:P1:B1 and route:P2:B1) on the same tick before
+        # localizer hysteresis finishes, fold them into bank:*:b so M4 does not build two packages for one bank fault.
+        if primary is None and anchor is None:
+            route_banks = [s.split(":")[2] for s in severity if s.startswith("route:")]
+            candidates = [
+                b for b in S.BANKS
+                if route_banks.count(b) >= 2 or (f"bank:*:{b}" in severity and route_banks.count(b) >= 1)
+            ]
+            if candidates:
+                best_b = max(candidates, key=lambda b: d3[S.INDEX[f"bank:*:{b}"]].score)
+                primary = f"bank:*:{best_b}"
+
         for sid, sev in severity.items():
             if sid == "platform:*:*" and len(severity) > 1 and anchor is None:
                 continue
@@ -112,6 +142,8 @@ class Pipeline:
                                                      force=anchor is not None)
             i = S.INDEX[sid]
             new_verdict = loc.verdict if (loc.primary_segment_id is None or related(inc.segment_id, loc.primary_segment_id)) else inc.verdict
+            if new_verdict == "INSUFFICIENT_EVIDENCE" and inc.segment_id.startswith("bank:"):
+                new_verdict = "BANK_SIDE"
             if changed or new_verdict != inc.verdict:
                 inc.verdict, inc.updated_ms = new_verdict, now_ms
                 inc.reasons, inc.confidence = d3[i].reasons, d3[i].confidence
@@ -141,8 +173,10 @@ class Pipeline:
         segs = []
         for i, sid in enumerate(S.SEGMENTS):
             flags = list(ft.flags[i])
+            if self.model_degraded and sid.startswith("psp:"):
+                flags.append("model_degraded")
             busy = not math.isnan(ft.B[i, FI["arrival_rate"]]) and ft.B[i, FI["arrival_rate"]] > 0
-            seg_degraded = degraded or ("no_data" in flags and busy and "warming_up" not in flags)
+            seg_degraded = degraded or self.model_degraded or ("no_data" in flags and busy and "warming_up" not in flags)
             state = ("DEGRADED_MONITORING" if seg_degraded else severity.get(sid)
                      or ("RECOVERING" if sid in recovering else "MONITORING"))
             row = {"segment_id": sid, "eligible": bool(ft.eligible[i]), "flags": flags,
@@ -158,10 +192,10 @@ class Pipeline:
                            countdown_s_estimate=f["countdown_s_estimate"])
             segs.append(row)
         states = {s["state"] for s in segs}
-        global_state = ("DEGRADED_MONITORING" if degraded else "CRITICAL" if "CRITICAL" in states
+        global_state = ("DEGRADED_MONITORING" if (degraded or self.model_degraded) else "CRITICAL" if "CRITICAL" in states
                         else "WARNING" if "WARNING" in states else "RECOVERING" if recovering else "MONITORING")
         self.last_tick_ms = now_ms
-        uniq = {i.incident_id: i for i in updates}
+        uniq = {i.incident_id: i for i in updates if i.incident_id in self.lifecycle.incidents}
         self.last_snapshot = {"schema_version": 1, "run_id": self.run_id, "universe": self.universe, "tick_sim_ms": int(now_ms),
                 "global_state": global_state, "segments": segs, "localization": loc.to_dict(),
                 "detector_alerts": [{"detector": d, "segment_id": s, "first_alert_sim_ms": int(t)}

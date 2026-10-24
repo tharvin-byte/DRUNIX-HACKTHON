@@ -1,0 +1,13 @@
+[
+ {
+  "incident_id": "gt-1",
+  "onset_ms": 236587,
+  "end_ms": 367312,
+  "level": "bank",
+  "psp": "*",
+  "bank": "B5",
+  "kind": "bank_slowdown",
+  "magnitude": 7.82757567704167,
+  "is_incident": true
+ }
+]

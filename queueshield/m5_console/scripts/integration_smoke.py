@@ -21,7 +21,7 @@ from pathlib import Path
 import httpx
 
 ROOT = Path(__file__).resolve().parents[2]
-PY = str(ROOT / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python"))
+PY = sys.executable
 KEY = "smoke-key"
 PORTS = {"m1": 8004, "m2": 8001, "m3": 8002, "m4": 8003}
 
@@ -41,9 +41,10 @@ def main() -> int:
     logdir.mkdir(parents=True, exist_ok=True)
     uv = [PY, "-m", "uvicorn", "--factory"]
     procs = [
-        start("m1", ["node", "src/main.ts"], "m1_ledger/gateway", {"LEDGER_MODE": "mock"}, logdir),
+        start("m1", ["node", "src/main.ts"], "m1_ledger/gateway", {"LEDGER_MODE": "mock", "PORT": "8004"}, logdir),
         start("m2", uv + ["qsim.api:create_app", "--port", "8001"], "m2_simulator",
-              {"SIM_MODE": "live", "CONTROL_URL": "http://127.0.0.1:8003"}, logdir),
+              {"SIM_MODE": "live", "CONTROL_URL": "http://127.0.0.1:8003", "LEDGER_MODE": "mock",
+               "LEDGER_URL": "http://127.0.0.1:8004"}, logdir),
         start("m3", uv + ["qdet.api:create_app", "--port", "8002"], "m3_detection",
               {"DETECT_MODE": "live", "SIM_URL": "http://127.0.0.1:8001"}, logdir),
         start("m4", uv + ["qctl.api:create_app", "--port", "8003"], "m4_control",
